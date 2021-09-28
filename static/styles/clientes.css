@@ -1,0 +1,104 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap');
+
+html, body{
+    margin: 0;
+    background-color: #FAFAFA;
+    font-family: 'Quicksand', sans-serif;
+
+}
+
+h1{
+    background-color: #346751;
+    color: #FAFAFA ;
+    margin-top: 0;
+    padding: 15px;
+    font-size: 24px;
+    box-sizing: border-box;  
+}
+
+
+h2{
+    font-weight: bold;
+    font-size: 24px;
+    margin-left: 20px;
+  
+}
+
+
+.container{
+    display: flex;
+    flex-direction: row;
+    
+}
+
+#clientes, #cardapio, #acompanhar, #logout{
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.botoes{
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+
+.adicionar{
+    background-color: aqua;
+}
+
+.menu-lateral{
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    height: 1024px;
+    box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.06);
+}
+
+
+
+.card{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 700px;
+    height: 50px;
+    padding: 5px;
+    box-shadow: 10px 10px 20px 10px rgba(0, 0, 0, 0.06);
+    border-radius: 4px;
+    margin-top: 15px;
+    margin-left: 20px;
+}
+
+#excluir, #novo-pedido, #editar{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    align-content: center;
+    width: 40px;
+    height: 40px;
+    font-size: 8px;
+}
+
+#botao-add-cliente{
+    margin-left: 15px;
+    background: #C84B31;
+    border-radius: 5px;
+    color: #FAFAFA;
+    border: none;
+    width: 228px;
+    height: 40px;
+    font-family: 'Quicksand', sans-serif;
+    padding: 10px;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+#botao-pesquisar{
+    width: 228px;
+    height: 40px;
+    border-radius: 5px;
+    border: 1px solid black;
+    outline-color: #C84B31;
+    padding: 10px;
+    box-sizing: border-box;
+}

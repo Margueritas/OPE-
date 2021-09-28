@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <link rel="stylesheet" href="{% static 'styles/clientes.css' %}">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=, initial-scale=1.0">
+    <title>Clientes</title>
+</head>
+<body>
+    <div class="container">
+        <div class="menu-lateral">
+            <h1>Pizzaria Cosa Nostra</h1>
+            <div><p id="clientes">Clientes</p></div>
+            <div><p id="cardapio">Cardápio</p></div>
+            <div><p id="acompanhar">Acompanhar pedido</p></div>
+            <div><a href="{% url 'logout' %}"><p id="logout">Logout</p></a></div>
+        </div>
+
+        <div class="adicionar-clientes">
+            <div class="barra-clientes">
+                <h2>Clientes</h2>
+            </div>
+
+           
+            <div class="botoes">
+                <div><input type="button" value="adicionar cliente" id="botao-add-cliente"></div>
+                <div><input type="search" name="" placeholder="pesquisar cliente" id="botao-pesquisar"></div>
+            </div>
+    
+
+            <div class="cards">
+                <div class="card">
+                    <p>Marcelo Arruda</p>
+                    <p>CPF: 098345678-98</p>
+                    <p>Telefone: 11 955781859</p>
+                    <!-- <input type="button" value="excluir" id="excluir"> -->
+                    <!-- <input type="button" value="editar" id="editar"> -->
+                    <!-- <input type="button" value="novo pedido" id="novo-pedido"> -->
+                </div>
+            </div>
+        </div>
+    
+    </div>
+</body>
+</html>
