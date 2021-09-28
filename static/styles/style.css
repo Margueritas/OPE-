@@ -1,0 +1,135 @@
+
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    overflow-y: hidden;
+  }
+
+
+.container{
+    display: flex;
+    
+}
+.formulario-login{
+    width: 50%;
+    height: 100%;
+    margin-left: 90px;
+    margin-top: 150px;
+}
+
+.imagem-principal{
+    width: 50%;
+}
+
+.lembrar-senha, .esqueceu-senha{
+    display: inline-block;
+    margin-right: 35px;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    
+}
+
+h3{
+    font-family: 'Quicksand', sans-serif;
+    color: #346751;
+    font-size: 25px;  
+}
+
+h2{
+    font-family: 'Quicksand', sans-serif;
+    color: #346751;
+    font-size: 40px;  
+    font-weight: bold;
+}
+#senha, #email{
+   width: 300px;
+   height: 40px;
+   border: 2px solid #346751;
+   border-radius: 6px;
+   color: #346751;
+   margin-top: 10px;
+   padding: 10px;
+   box-sizing: border-box;
+   outline: #346751;
+}
+
+.form{
+    width: 300px;
+    height: 40px;
+    border: 2px solid #346751;
+    box-sizing: border-box;
+    border-radius: 6px;
+    display: inline-block;
+    margin-top: 10px;
+}
+
+#check{
+    accent-color: #346751;
+}
+
+.esqueceu-senha, a, botao, .lembrar-senha {
+    font-family: 'Inter', sans-serif;
+}
+
+a{
+    color: #346751;
+}
+
+.lembrar-senha{
+    display: inline;
+    
+}
+
+input[type=submit]{
+   display: block;
+   width: 300px;
+   height: 40px;
+   background: #346751;
+   border: 2px solid #346751;
+   border-radius: 6px;
+   color: white;
+   margin-top: 10px;
+   cursor: pointer;
+
+}
+
+.imagem-principal{
+display: inline-block;
+width: 100vh;
+}
+
+@media screen and (max-width: 1440px) {
+   
+    h3{
+        font-size: 20px;
+    }
+
+    h2{
+        margin-top: 10px;
+        margin-bottom: 1px;
+       
+    }
+
+
+   
+    .formulario-login{
+        margin-top: 50px;
+        margin-right: 30px;
+        
+   }
+
+   #imagem{
+     width: 100vh;
+       
+   }
+}
+
+
+
+
+
+
+
+
+

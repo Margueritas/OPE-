@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{% static 'styles/style.css' %}" media="screen" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+    <title>Login</title>
+</head>
+<body>
+    <main class="container">
+        <div class="formulario-login">
+            <form method="post">
+                {% csrf_token %}
+                <h3>Seja bem vindo a Pizzaria Cosa Nostra!</h3>
+                <h2>Login</h2>
+                <div class="input-email">
+                    <input type="text" name="username" id="email" placeholder="E-mail">
+                </div>
+
+                <div class="input-senha">
+                    <input type="password" name="password" id="senha" placeholder="Senha">
+                </div>
+        
+                <div class="lembrar-senha">
+                    <input type="checkbox" name="" id="check"> Lembrar-me
+                </div>
+    
+                <div class="esqueceu-senha">
+                    <a href="#">esqueceu a senha?</a>
+                </div>
+                
+                <div class="botao-entrar">
+                    <input type="submit" value="Entrar">
+                </div>
+               
+            </form>
+        </div>
+        <div class="imagem-principal">
+            <img src="{% static 'images/principal.png' %}" alt="" id="imagem">
+        </div>
+    </main>
+</body>
+</html>
+
+
