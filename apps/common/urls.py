@@ -1,7 +1,7 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from django.contrib.auth import logout
-import config.dev.settings as settings
+import config.settings as settings
 
 from . import views
 
