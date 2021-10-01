@@ -10,32 +10,32 @@ class UserManager(BaseUserManager):
     use_in_migrations = True
 
 
-    def _cria_usuario(self, telefone, password, **extra_fields):
+    def _cria_usuario(self, email, password, **extra_fields):
         """Create and save a User with the given phone and password."""
-        if not telefone:
-            raise ValueError('O usuário deve possuir um telefone válido')
-        self.telefone = telefone
-        user = self.model(telefone=telefone, **extra_fields)
+        if not email:
+            raise ValueError('O usuário deve possuir um email válido')
+        self.email = email
+        user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def cria_cliente(self, telefone, password=None, **extra_fields):
-        """Create and save a regular User with the given phone and password."""
+    def cria_cliente(self, email, password=None, **extra_fields):
+        """Create and save a regular User with the given email and password."""
         extra_fields.setdefault('is_superuser', False)
         extra_fields.setdefault('is_staff', False)
-        return self._cria_usuario(telefone, password, **extra_fields)
+        return self._cria_usuario(email, password, **extra_fields)
 
-    def cria_funcionario(self, telefone, password, **extra_fields):
-        """Create and save a SuperUser with the given phone and password."""
+    def cria_funcionario(self, email, password, **extra_fields):
+        """Create and save a SuperUser with the given email and password."""
         extra_fields.setdefault('is_superuser', False)
         extra_fields.setdefault('is_staff', True)
-        return self._cria_usuario(telefone, password, **extra_fields)
+        return self._cria_usuario(email, password, **extra_fields)
 
-    def create_superuser(self, telefone, password, **extra_fields):
+    def create_superuser(self, email, password, **extra_fields):
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('is_staff', True)
-        return self._cria_usuario(telefone, password, **extra_fields)
+        return self._cria_usuario(email, password, **extra_fields)
 
 class Usuario(AbstractBaseUser, PermissionsMixin):
     """User model."""
