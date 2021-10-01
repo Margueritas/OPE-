@@ -90,7 +90,7 @@ DATABASES = {
         "NAME": "d4n0uikih1c9nv",
         "USER": "uofcyfukeawxfh",
         "PASSWORD": "1a48baaa8c2db89f1890c3a5f196c81aae47cda05e1106f2c399c61fa82c3926",
-        "HOST": "postgres://uofcyfukeawxfh:1a48baaa8c2db89f1890c3a5f196c81aae47cda05e1106f2c399c61fa82c3926@ec2-3-233-7-12.compute-1.amazonaws.com:5432/d4n0uikih1c9nv",
+        "HOST": "ec2-3-233-7-12.compute-1.amazonaws.com",
         "PORT": "5432",
     }
 }
