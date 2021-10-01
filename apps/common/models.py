@@ -41,7 +41,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     """User model."""
     nome = models.CharField(_('nome'), max_length=30, blank=True)
     sobrenome = models.CharField(_('sobrenome'), max_length=150, blank=True)
-    telefone = models.CharField(_('telefone'), max_length=11, unique=True)
+    telefone = models.CharField(_('telefone'), max_length=11)
     email = models.EmailField(blank=True, null=True, unique=True)
     rg = models.CharField(_('rg'), max_length=12, null=True, blank=True)
     cpf = models.CharField(_('cpf'), max_length=11, null=True, blank=True)
