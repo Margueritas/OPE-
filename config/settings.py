@@ -32,7 +32,7 @@ TEMPLATE_DIRS = [os.path.join(STATIC_ROOT, 'templates')]
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-SECRET_KEY = os.environ.get('DJANGO_DEBUG')
+DEBUG = os.environ.get('DJANGO_DEBUG')
 
 ALLOWED_HOSTS = ['pacific-taiga-57165.herokuapp.com','0.0.0.0']
 
