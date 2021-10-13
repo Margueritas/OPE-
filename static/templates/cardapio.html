@@ -1,0 +1,37 @@
+{% block content %}
+<div id="texto">
+    <p>Selecione os itens do pedido</p>
+</div>
+
+<div class="opcoes-cardapio">
+    <ul class="tipos">
+        {% for tipo in tipos%}
+        <li class="tipositem">
+            <a href="?tipo={{tipo.id}}" {% if tipo.tipo == tipo_ativo.tipo%}class="selecionado"{% endif %}>
+                {{ tipo.tipo }}
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="container-pizzas">
+    <section class="grid grid-3-columns">
+        {% for produto in produtos %}
+        <div class="card-pizza">
+            <div class="card-image" style="background-image: url('{{ produto.imagem }}');">
+            </div>
+            <p class="sabor-pizza">{{ produto.nome }}</p>
+            <p class="descricao-pizza">{{ produto.descricao }}</p>
+            <div class="valor-pizza">
+                <p class="porcao-pizza">pizza inteira</p>
+                <p class="preco-pizza">R${{ produto.preco|floatformat:"2" }}</p>
+            </div>
+            <!-- <div class="quantidade">
+                <p>Selecione a quantidade</p>
+            </div> -->
+        </div>
+        {% endfor %}
+    </section>
+</div>
+{% endblock%}

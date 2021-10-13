@@ -1,0 +1,51 @@
+{% block sidebar %}
+<style>
+    .bold
+    {
+        font-weight: bold;
+    }
+    .sidebar-link {
+        color:black;
+        text-decoration: none;   
+    }
+    .sidebar-item {
+        border-left: solid 5px #F8F8F8;
+        padding-left: 8%;
+    }
+    .sidebar-item-selected {
+        border-left: solid 5px #C84B31;
+        padding-left: 8%;
+    }
+    .sidebar-icon {
+        margin-right: 20px;
+        color: #333;
+    }
+    a.sidebar-link p {
+        font-size:large;
+        display:inline-block;
+    }
+</style>
+<div class="menu-lateral" style="width: 25%">
+    <h1>Pizzaria Cosa Nostra</h1>
+    <div class="{% if 'clientes' in view %}sidebar-item-selected{% else %}sidebar-item{% endif %}">
+        <a href="{% url 'clientes' %}" class="sidebar-link">
+            <p id="clientes"><span class="material-icons sidebar-icon">person_outline</span>Clientes</p>
+        </a>
+    </div>
+    <div class="{% if 'cardapio' in view %}sidebar-item-selected{% else %}sidebar-item{% endif %}">
+        <a href="{% url 'cardapio' %}" class="sidebar-link">
+            <span class="material-icons sidebar-icon">menu_book</span><p id="cardapio">Cardápio</p>
+        </a>
+    </div>
+    <div class="{% if 'pedidos' in view %}sidebar-item-selected{% else %}sidebar-item{% endif %}">
+        <a href="{% url 'pedidos' %}" class="sidebar-link">
+            <p id="acompanhar"><span class="material-icons sidebar-icon">schedule</span>Pedidos</p>
+        </a>
+    </div>
+    <div class="sidebar-item">
+        <a href="{% url 'logout' %}" class="sidebar-link">
+            <p id="logout"><span class="material-icons sidebar-icon">logout</span>Logout</p>
+        </a>
+    </div>
+</div>
+{% endblock %}

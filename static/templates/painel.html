@@ -2,46 +2,28 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <link rel="stylesheet" href="{% static 'styles/clientes.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/painel.css' %}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- <script src="https://kit.fontawesome.com/13eeeeaa76.js" crossorigin="anonymous"></script> -->
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=, initial-scale=1.0">
-    <title>Clientes</title>
+    <title>{{ title }}</title>
 </head>
 <body>
     <div class="container">
-        <div class="menu-lateral">
-            <h1>Pizzaria Cosa Nostra</h1>
-            <div><p id="clientes">Clientes</p></div>
-            <div><p id="cardapio">Cardápio</p></div>
-            <div><p id="acompanhar">Acompanhar pedido</p></div>
-            <div><a href="{% url 'logout' %}"><p id="logout">Logout</p></a></div>
+        {% block sidebar %}
+        {% include 'sidebar.html' %}
+        {% endblock %}
+        
+        <div style="margin-left: 26.5%; width: 71.5%;">
+            <div id="titulo">
+                <h2>{{ title }}</h2>
+            </div>
+            {% block content %}
+            {% include view %}
+            {% endblock %}
         </div>
-
-        <div class="adicionar-clientes">
-            <div class="barra-clientes">
-                <h2>Clientes</h2>
-            </div>
-
-           
-            <div class="botoes">
-                <div><input type="button" value="adicionar cliente" id="botao-add-cliente"></div>
-                <div><input type="search" name="" placeholder="pesquisar cliente" id="botao-pesquisar"></div>
-            </div>
-    
-
-            <div class="cards">
-                <div class="card">
-                    <p>Marcelo Arruda</p>
-                    <p>CPF: 098345678-98</p>
-                    <p>Telefone: 11 955781859</p>
-                    <!-- <input type="button" value="excluir" id="excluir"> -->
-                    <!-- <input type="button" value="editar" id="editar"> -->
-                    <!-- <input type="button" value="novo pedido" id="novo-pedido"> -->
-                </div>
-            </div>
-        </div>
-    
     </div>
 </body>
 </html>
