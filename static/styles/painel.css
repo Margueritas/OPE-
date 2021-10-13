@@ -1,0 +1,263 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap');
+
+html, body{
+    margin: 0;
+    background-color: white;
+    font-family: 'Quicksand', sans-serif;
+
+}
+
+h1{
+    background-color: #346751;
+    color: #FAFAFA ;
+    margin-top: 0;
+    margin-bottom:0;
+    text-align: center;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    font-size: 24px;
+    box-sizing: border-box;
+    cursor:default;  
+}
+
+
+div #titulo h2{
+    font-weight: bold;
+    font-size: 32px;
+    margin-left: 20px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid #ddd;
+    cursor:default;  
+}
+
+
+.container{
+    display: flex;
+    flex-direction: row;
+    
+}
+
+#clientes, #cardapio, #acompanhar, #logout{
+    
+    cursor: pointer;
+}
+
+.botoes{
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+
+.menu-lateral{
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    height: 100%;
+    position:fixed!important;
+    z-index:1;
+    overflow:auto;
+    box-shadow: 10px 10px 20px 2px rgba(0, 0, 0, 0.06);
+    background-color: #F8F8F8;
+}
+
+.cards {
+    width: auto;
+
+}
+
+.card{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    height: 50px;
+    padding: 5px;
+    box-shadow: 10px 10px 18px 1px rgba(65, 44, 44, 0.06);
+    border-radius: 4px;
+    margin-top: 15px;
+    margin-left: 20px;
+    background-color: #F8F8F8;
+}
+
+#excluir, #novo-pedido, #editar{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    align-content: center;
+    width: 40px;
+    height: 40px;
+    font-size: 8px;
+}
+
+#botao-add-cliente{
+    margin-left: 20px;
+    background: #C84B31;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    font-size: medium;
+    border: none;
+    width: 228px;
+    height: 50px;
+    font-family: 'Quicksand', sans-serif;
+    cursor: pointer;
+    display: inline;
+    vertical-align: middle;
+}
+
+#botao-add-cliente-texto {
+    vertical-align: middle;
+}
+
+#botao-add-cliente-icon {
+    vertical-align: middle;
+    display: inline-block;
+}
+
+#botao-pesquisar{
+    width: 250px;
+    border-radius: 7px;
+    border: 1px solid #999;
+    outline-color: #C84B31;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    padding-left: 10px;
+    margin: 0;
+    display: inline-flex;
+    vertical-align: middle;
+}
+
+#pesquisacliente{
+    width: 87%;
+    border: none;
+    outline: none;
+    margin: 0;
+    text-align: center;
+    font-size: medium;
+}
+
+.opcoes-cardapio{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    justify-content: space-around;
+}
+
+ul.tipos {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+    margin-left: -50px;
+    margin-top: 20px;
+    margin-bottom: 50px;
+}
+
+li.tipositem {
+    list-style-type: none;
+    cursor: pointer;
+}
+
+li.tipositem a {
+    color: black;
+    text-decoration: none;
+}
+
+li.tipositem a.selecionado {
+    color: black;
+    font-weight: bold;
+    text-decoration: none;
+    border-bottom: #C84B31 2px solid;
+}
+
+#texto {
+    margin-left: 20px;
+    font-weight: bold;
+}
+
+.container-pizzas{
+    margin-left: 25px;
+}
+
+/* a:hover{
+    color: #346751;
+    transition: 0.5s;
+    text-decoration: underline #346751;
+} */
+
+.opcoes-cardapio{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    justify-content: space-around;
+
+}
+
+.card-pizza{
+    /* margin-top: 30px; */
+    /* margin-left: 30px; */
+    /* flex-direction: column; */
+    /* width: 200px; */
+    display: grid;
+    grid-template-rows: 160px 55px 65px;
+    padding-bottom: 20px;
+    height: 320px;
+    background: #FFFFFF;
+    box-shadow: 10px 10px 10px rgba(68, 67, 67, 0.06);
+    border-radius: 4px;
+    cursor: pointer;
+
+}
+
+.sabor-pizza{
+    font-size: 18px;
+    text-align: center;
+    font-weight: bold;
+    align-self: center;
+}
+
+.descricao-pizza{
+    text-align: center;
+    font-size: 15px;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+.porcao-pizza{
+    margin-left: 20px;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.valor-pizza{
+    display: flex ;
+    align-items:flex-end;
+    justify-content:start;
+}
+
+.preco-pizza {
+    margin-left: 65px;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.card-image{
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;  
+    width: 250px;
+    height: 150px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.grid {
+	display: grid;
+    align-content: start;
+    justify-content: space-evenly;
+    margin-bottom: 40px;
+}
+
+.grid-3-columns {
+	grid-template-columns: repeat(3, 250px);
+    gap: 50px;
+}
