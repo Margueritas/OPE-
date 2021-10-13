@@ -103,11 +103,20 @@ class Pedido(models.Model):
         db_table = 'pedido'
 
 
+class ProdutoTipo(models.Model):
+    tipo = models.CharField(max_length=255)
+
+    class Meta:
+        managed = False
+        db_table = 'produtotipo'
+
+
 class Produto(models.Model):
     nome = models.CharField(max_length=255)
-    descrição = models.CharField(max_length=255, blank=True, null=True)
+    descricao = models.CharField(max_length=255, blank=True, null=True)
     preco = models.FloatField(blank=True, null=True)
     imagem = models.CharField(max_length=255, blank=True, null=True)
+    idtipo = models.ForeignKey(ProdutoTipo, models.DO_NOTHING, db_column='idtipo')
 
     class Meta:
         managed = False
