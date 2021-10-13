@@ -261,3 +261,46 @@ li.tipositem a.selecionado {
 	grid-template-columns: repeat(3, 250px);
     gap: 50px;
 }
+
+.textinput {
+    border: none;
+    outline: none;
+    background-color: #FAFAFA;
+    border-bottom: 1px solid  #C4C4C4;
+}
+
+.labelcadastro {
+    display: block;
+    color: #888;
+    font-size: small;
+}
+
+#container-clientes-cadastro {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 30px;
+    padding-right: 30px;
+    box-shadow: 10px 10px 18px 1px rgba(65, 44, 44, 0.06);
+    border-radius: 4px;
+    margin-top: 15px;
+    margin-left: 20px;
+    background-color: #F8F8F8;
+    margin-bottom: 30px;
+}
+form {
+    width: 100%;
+}
+.divformgroup {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.divformgroup input#nome, input#sobrenome, input#telefone,
+input#cep, input#endereco, input#numero, input#complemento,
+input#bairro, input#cidade {
+    width: 100%;
+    margin-top:5px;
+}

@@ -11,6 +11,7 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(next_page=settings.LOGOUT_REDIRECT_URL), name='logout'),
     path('painel/', views.painel, name='painel'),
     path('clientes/', views.clientes, name='clientes'),
+    path('clientes/cadastro', views.clientes_cadastro, name='clientes_cadastro'),
     path('cardapio/', views.cardapio, name='cardapio'),
     path('pedidos/', views.pedidos, name='pedidos'),
 ]

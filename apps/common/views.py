@@ -12,7 +12,11 @@ def painel(request):
     return render(request, 'painel.html', context={'view': 'pedidos.html', 'title': 'Pedidos'})
 
 def clientes(request):
-    return render(request, 'painel.html', context={'view': 'clientes.html', 'title': 'Clientes'})
+    usuarios = Usuario.objects.all()
+    return render(request, 'painel.html', context={'view': 'clientes.html', 'title': 'Clientes', 'usuarios': usuarios})
+
+def clientes_cadastro(request):
+    return render(request, 'painel.html', context={'view': 'clientes_cadastro.html', 'title': 'Cadastrar cliente'})
 
 def cardapio(request):
     tipos_produtos = ProdutoTipo.objects.all()

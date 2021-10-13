@@ -1,0 +1,49 @@
+{% block content %}
+<div id="container-clientes-cadastro">
+    <form method="post">
+        {% csrf_token %}
+        <div class="divformgroup">
+            <label for="nome" class="labelcadastro">Nome</label>
+            <input type="text" name="nome" id="nome" class="textinput">
+        </div>
+        <div class="divformgroup">
+            <label for="sobrenome" class="labelcadastro">Sobrenome</label>
+            <input type="text" name="sobrenome" id="sobrenome" class="textinput">
+        </div>
+        <div class="divformgroup">
+            <label for="telefone" class="labelcadastro">Telefone</label>
+            <input type="text" name="telefone" id="telefone" class="textinput">
+        </div>
+        <div class="divformgroup">
+            <label for="cep" class="labelcadastro">Cep</label>
+            <input type="text" name="cep" id="cep" class="textinput">
+        </div>
+        <div class="divformgroup">
+            <label for="endereco" class="labelcadastro">Endereco</label>
+            <input type="text" name="endereco" id="endereco" class="textinput">
+        </div>
+        <div class="divformgroup">
+            <label for="numero" class="labelcadastro">Numero</label>
+            <input type="text" name="numero" id="numero" class="textinput">
+        </div>
+        <div class="divformgroup">
+            <label for="complemento" class="labelcadastro">Complemento</label>
+            <input type="text" name="complemento" id="complemento" class="textinput">
+        </div>
+        <div class="divformgroup">
+            <label for="bairro" class="labelcadastro">Bairro</label>
+            <input type="text" name="bairro" id="bairro" class="textinput">
+        </div>
+        <div class="divformgroup">
+            <label for="cidade" class="labelcadastro">Cidade</label>
+            <input type="text" name="cidade" id="cidade" class="textinput">
+        </div>
+        <div style="float: right; margin-right: -5px;">
+            <button id="botao-add-cliente">
+                <span id="botao-add-cliente-icon" class="material-icons">person_add</span>
+                <span id="botao-add-cliente-texto">adicionar cliente</span>
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock%}

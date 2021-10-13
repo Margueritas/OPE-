@@ -13,13 +13,24 @@
 </div>
 
 <div class="cards">
+    {% for usuario in usuarios %}
     <div class="card">
-        <p>Marcelo Arrudaa</p>
-        <p>CPF: 098345678-98</p>
-        <p>Telefone: 11 955781859</p>
-        <!-- <input type="button" value="excluir" id="excluir"> -->
-        <!-- <input type="button" value="editar" id="editar"> -->
-        <!-- <input type="button" value="novo pedido" id="novo-pedido"> -->
+        <p>{{ usuario.nome }} {{ usuario.sobrenome }}</p>
+        <p>CPF: {{ usuario.cpf }}</p>
+        <p>Telefone: {{ usuario.telefone }}</p>
+        <input type="button" value="excluir" id="excluir">
+        <input type="button" value="editar" id="editar">
+        <input type="button" value="novo pedido" id="novo-pedido">
     </div>
+    {% endfor %}
 </div>
+
 {% endblock%}
+
+<script>
+$(document).ready(
+    $("#botao-add-cliente").click(function(e) {
+        window.location.href = "/clientes/cadastro";
+    })
+);
+</script>
