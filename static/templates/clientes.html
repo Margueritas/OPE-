@@ -15,16 +15,28 @@
 <div class="cards">
     {% for usuario in usuarios %}
     <div class="card">
-        <p>{{ usuario.nome }} {{ usuario.sobrenome }}</p>
-        <p>CPF: {{ usuario.cpf }}</p>
-        <p>Telefone: {{ usuario.telefone }}</p>
-        <input type="button" value="excluir" id="excluir">
-        <input type="button" value="editar" id="editar">
-        <input type="button" value="novo pedido" id="novo-pedido">
+        <div class="card-dados-cliente">
+            <p style="font-weight: bold;">{{ usuario.nome }} {{ usuario.sobrenome }}</p>
+            <p>CPF: {{ usuario.cpf }}</p>
+            <p>telefone: {{ usuario.telefone }}</p>
+        </div>
+        <div style="display: flex; justify-content: end; padding-right: 10px;">
+            <button class="botao-clientes">
+                <span class="material-icons">delete_outline</span>
+                <span class="label-botao-clientes">excluir</span>
+            </button>
+            <button class="botao-clientes">
+                <span class="material-icons">edit</span>
+                <span class="label-botao-clientes">editar</span>
+            </button>
+            <button class="botao-clientes">
+                <span class="material-icons">menu_book</span>
+                <span class="label-botao-clientes">novo pedido</span>
+            </button>
+        </div>
     </div>
     {% endfor %}
 </div>
-
 {% endblock%}
 
 <script>

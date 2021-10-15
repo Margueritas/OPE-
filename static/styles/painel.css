@@ -66,19 +66,29 @@ align-items: center;
 }
 
 .card{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    height: 50px;
+    display: grid;
+    grid-template-columns: 70% 30%;
+    /* flex-direction: row; */
+    /* justify-content: start; */
+    height: 85px;
     padding: 5px;
     box-shadow: 10px 10px 18px 1px rgba(65, 44, 44, 0.06);
     border-radius: 4px;
     margin-top: 15px;
     margin-left: 20px;
     background-color: #F8F8F8;
+    /* align-items: center; */
 }
 
-#excluir, #novo-pedido, #editar{
+.card-dados-cliente {
+    display: flex;
+    justify-content:space-between;
+    align-items: center;
+    padding-left: 20px;
+    padding-right: 50px;
+}
+
+/* #excluir, #novo-pedido, #editar{
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -86,6 +96,23 @@ align-items: center;
     width: 40px;
     height: 40px;
     font-size: 8px;
+} */
+
+.botao-clientes {
+    cursor:pointer;
+    background: none;
+    border: none;
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-left: 15px;
+    margin-right: 15px;
+}
+
+.label-botao-clientes {
+    display: flex;
+    margin-top:5px
 }
 
 #botao-add-cliente{
@@ -295,12 +322,15 @@ form {
 }
 .divformgroup {
     width: 100%;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
 }
 
 .divformgroup input#nome, input#sobrenome, input#telefone,
 input#cep, input#endereco, input#numero, input#complemento,
 input#bairro, input#cidade {
     width: 100%;
-    margin-top:5px;
+    margin-top:10px;
+    color: #333;
+    font-size: 16px;
+    padding-bottom: 5px;
 }
