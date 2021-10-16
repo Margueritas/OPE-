@@ -12,9 +12,9 @@
     </div>
 </div>
 
-<div class="cards">
+<div class="app-cards">
     {% for usuario in usuarios %}
-    <div class="card">
+    <div class="app-card">
         <div class="card-dados-cliente">
             <p style="font-weight: bold;">{{ usuario.nome }} {{ usuario.sobrenome }}</p>
             <p>CPF: {{ usuario.cpf }}</p>
@@ -46,3 +46,26 @@ $(document).ready(
     })
 );
 </script>
+
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalConfirmarDelete">
+    Launch static backdrop modal
+  </button>
+
+<div class="modal" tabindex="-1" id="modalConfirmarDelete"
+    data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Excluir Cliente</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Deseja mesmo excluir o cliente {cliente}?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Sim</button>
+          <button type="button" class="btn btn-secondary">Não</button>
+        </div>
+      </div>
+    </div>
+  </div>
