@@ -1,7 +1,9 @@
 from django.shortcuts import render,redirect, get_list_or_404
+from apps.common import carrinho
 from apps.common.models import Usuario, ProdutoTipo, Produto
+from apps.common.carrinho import get_carrinho_dict
 from django.http import HttpRequest, HttpResponse
-from django.core import serializers
+import json
 
 # Create your views here.
 def index(request:HttpRequest) -> HttpResponse:
@@ -27,19 +29,30 @@ def clientes_cadastro(request:HttpRequest) -> HttpResponse:
 def clientes_inserir(request:HttpRequest):
     return True
 
-def cardapio(request:HttpRequest) -> HttpResponse:
+def carrinho_editar(request:HttpRequest, id, quantidade) -> HttpResponse:
+    carrinho = get_carrinho_dict(request)
+    carrinho[id] = quantidade
+    return HttpResponse(json.dumps(carrinho))
+
+def carrinho_deletar(request:HttpRequest, id) -> HttpResponse:
+    carrinho = get_carrinho_dict(request)
+    del carrinho[id]
+    return HttpResponse(json.dumps(carrinho))
+
+def carrinho_carregar(request:HttpRequest) -> HttpResponse:
+    return HttpResponse(json.dumps(get_carrinho_dict(request)))
+
+
+def cardapio(request):
     tipos_produtos = ProdutoTipo.objects.all()
     tipo_selecionado = request.GET.get("tipo")
     if not tipo_selecionado:
         tipo_ativo = ProdutoTipo.objects.get(tipo="Pizzas Salgadas")
+        produtos = Produto.objects.filter(idtipo=tipo_ativo)
     else:
         tipo_ativo = ProdutoTipo.objects.get(id=tipo_selecionado)
-    return render(request, 'painel.html', context={'view': 'cardapio.html', 'title': 'Cardápio', 'tipos': tipos_produtos, "tipo_ativo": tipo_ativo})
+        produtos = Produto.objects.filter(idtipo=tipo_ativo)
+    return render(request, 'painel.html', context={'view': 'cardapio.html', 'title': 'Cardápio', 'tipos': tipos_produtos, "tipo_ativo": tipo_ativo, 'produtos': produtos})
 
-def cardapio_categoria(request:HttpRequest) -> HttpResponse:
-    tipo_desejado = request.GET.get("tipo")
-    tipo = ProdutoTipo.objects.get(id=tipo_desejado)
-    return HttpResponse(serializers.serialize('json', (get_list_or_404(Produto, idtipo=tipo))))
-
-def pedidos(request:HttpRequest) -> HttpResponse:
+def pedidos(request):
     return render(request, 'painel.html', context={'view': 'pedidos.html', 'title': 'Pedidos'})

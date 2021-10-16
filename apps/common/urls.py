@@ -14,6 +14,9 @@ urlpatterns = [
     path('clientes/cadastro', views.clientes_cadastro, name='clientes_cadastro'),
     path('clientes/delete/<email>', views.clientes_delete, name='clientes_delete'),
     path('clientes/inserir', views.clientes_inserir, name='clientes_inserir'),
+    path('carrinho/deletar/<id>', views.carrinho_deletar, name='carrinho_deletar'),
+    path('carrinho/editar/<id>/<quantidade>', views.carrinho_editar, name='carrinho_editar'),
+    path('carrinho/carregar', views.carrinho_carregar, name='carrinho_carregar'),
     path('cardapio/', views.cardapio, name='cardapio'),
     path('pedidos/', views.pedidos, name='pedidos'),
 ]
