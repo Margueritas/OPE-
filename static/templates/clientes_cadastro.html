@@ -1,6 +1,6 @@
 {% block content %}
 <div id="container-clientes-cadastro">
-    <form method="post">
+    <form id="form-inserir-cliente" method="post">
         {% csrf_token %}
         <div class="divformgroup">
             <label for="nome" class="labelcadastro">Nome</label>
@@ -46,4 +46,18 @@
         </div>
     </form>
 </div>
+<script>
+    var dadosForm = $('form').serialize();
+    $("#form-inserir-cliente").submit(function(event) {
+        console.log(event)
+    });
+    
+    enviaCliente = $.ajax({
+        url: '/clientes/inserir',
+        data: dadosForm,
+        method: 'POST',
+    }).done(function(response){
+        console.log(response)
+    })
+</script>
 {% endblock%}

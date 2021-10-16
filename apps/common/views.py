@@ -18,6 +18,9 @@ def clientes(request):
 def clientes_cadastro(request):
     return render(request, 'painel.html', context={'view': 'clientes_cadastro.html', 'title': 'Cadastrar cliente'})
 
+def clientes_inserir(request):
+    return True
+
 def cardapio(request):
     tipos_produtos = ProdutoTipo.objects.all()
     tipo_selecionado = request.GET.get("tipo")
