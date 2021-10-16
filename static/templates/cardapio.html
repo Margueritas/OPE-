@@ -26,7 +26,7 @@
         $('#seletor-tipo-' + tipoAtivo).removeClass(CLASSE_CSS_SELECIONADO);
         $('#seletor-tipo-' + tipoSelecionado).addClass(CLASSE_CSS_SELECIONADO);
         tipoAtivo = tipoSelecionado;
-        containerItens.html('Carregando...');
+        containerItens.html(CARREGANDO);
         $.ajax({
             url: '/cardapio/categoria?tipo=' + tipoSelecionado,
             method: 'GET'
@@ -63,6 +63,6 @@
 </div>
 
 <div class="container-pizzas">
-    <section class="grid grid-3-columns" id="cardapio-items"></section>
+    <section class="grid grid-3-columns" id="cardapio-items">Carregando...</section>
 </div>
 {% endblock%}
