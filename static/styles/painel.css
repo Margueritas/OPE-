@@ -1,13 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap');
 
 html, body{
-    margin: 0;
-    background-color: white;
-    font-family: 'Quicksand', sans-serif;
+    margin: 0 !important;
+    background-color: white !important;
+    font-family: 'Quicksand', sans-serif !important;
 
 }
 
-h1{
+h1#titulo-sidebar{
     background-color: #346751;
     color: #FAFAFA ;
     margin-top: 0;
@@ -18,12 +18,14 @@ h1{
     font-size: 24px;
     box-sizing: border-box;
     cursor:default;  
+    font-weight: bold;
 }
 
 
 div #titulo h2{
     font-weight: bold;
     font-size: 32px;
+    margin-top: 27px;
     margin-left: 20px;
     padding-bottom: 22px;
     border-bottom: 1px solid #ddd;
@@ -31,7 +33,7 @@ div #titulo h2{
 }
 
 
-.container{
+.app-container{
     display: flex;
     flex-direction: row;
     
@@ -46,6 +48,8 @@ div #titulo h2{
 display: flex;
 justify-content: space-between;
 align-items: center;
+margin-top: 20px;
+margin-bottom: 20px;
 }
 
 .menu-lateral{
@@ -60,12 +64,12 @@ align-items: center;
     background-color: #F8F8F8;
 }
 
-.cards {
+.app-cards {
     width: auto;
 
 }
 
-.card{
+.app-card{
     display: grid;
     grid-template-columns: 70% 30%;
     /* flex-direction: row; */
@@ -112,7 +116,9 @@ align-items: center;
 
 .label-botao-clientes {
     display: flex;
-    margin-top:5px
+    margin-top:5px;
+    font-size: 11px;
+    font-weight: bold;
 }
 
 #botao-add-cliente{
@@ -141,12 +147,12 @@ align-items: center;
 }
 
 #botao-pesquisar{
-    width: 250px;
+    width: 300px;
     border-radius: 7px;
     border: 1px solid #999;
     outline-color: #C84B31;
-    padding-top: 12px;
-    padding-bottom: 12px;
+    padding-top: 11px;
+    padding-bottom: 11px;
     padding-left: 10px;
     margin: 0;
     display: inline-flex;
@@ -154,7 +160,7 @@ align-items: center;
 }
 
 #pesquisacliente{
-    width: 87%;
+    width: 90%;
     border: none;
     outline: none;
     margin: 0;

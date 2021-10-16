@@ -12,16 +12,17 @@
     </div>
 </div>
 
-<div class="cards">
+<div class="app-cards">
     {% for usuario in usuarios %}
-    <div class="card">
+    <div class="app-card">
         <div class="card-dados-cliente">
             <p style="font-weight: bold;">{{ usuario.nome }} {{ usuario.sobrenome }}</p>
             <p>CPF: {{ usuario.cpf }}</p>
             <p>telefone: {{ usuario.telefone }}</p>
         </div>
         <div style="display: flex; justify-content: end; padding-right: 10px;">
-            <button class="botao-clientes">
+            <button class="botao-clientes" data-bs-toggle="modal" data-bs-target="#modalConfirmarDelete"
+                onclick="openModalDeleteUser('{{ usuario.nome }}', '{{ usuario.sobrenome }}', '{{ usuario.email }}');">
                 <span class="material-icons">delete_outline</span>
                 <span class="label-botao-clientes">excluir</span>
             </button>
@@ -40,9 +41,41 @@
 {% endblock%}
 
 <script>
+function openModalDeleteUser(name, surname, email) {
+    $('#cliente-nome').html(name);
+    $('#cliente-sobrenome').html(surname);
+    $('#email-to-delete').val(email);
+    $('#form-delete').attr('action', '/clientes/delete/' + escape(email));
+}
 $(document).ready(
     $("#botao-add-cliente").click(function(e) {
         window.location.href = "/clientes/cadastro";
     })
 );
 </script>
+
+<div class="modal" tabindex="-1" id="modalConfirmarDelete"
+    data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Excluir Cliente</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Deseja mesmo excluir o cliente
+            <span id="cliente-nome"></span>
+            <span id="cliente-sobrenome"></span>
+            ?
+          </p>
+        </div>
+        <div class="modal-footer">
+          <form method="get" action="/none" id="form-delete">
+            <input type="hidden" name="do-delete" value="true"/>
+            <button type="submit" class="btn btn-danger">Sim</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Não</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
