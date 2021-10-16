@@ -30,6 +30,7 @@ def clientes_inserir(request:HttpRequest):
 def cardapio(request:HttpRequest) -> HttpResponse:
     tipos_produtos = ProdutoTipo.objects.all()
     tipo_selecionado = request.GET.get("tipo")
+    tipo_ativo: ProdutoTipo
     if not tipo_selecionado:
         tipo_ativo = ProdutoTipo.objects.get(tipo="Pizzas Salgadas")
     else:
@@ -41,5 +42,5 @@ def cardapio_categoria(request:HttpRequest) -> HttpResponse:
     tipo = ProdutoTipo.objects.get(id=tipo_desejado)
     return HttpResponse(serializers.serialize('json', (get_list_or_404(Produto, idtipo=tipo))))
 
-def pedidos(request:HttpRequest):
+def pedidos(request:HttpRequest) -> HttpResponse:
     return render(request, 'painel.html', context={'view': 'pedidos.html', 'title': 'Pedidos'})

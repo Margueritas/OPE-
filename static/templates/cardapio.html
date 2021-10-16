@@ -1,4 +1,51 @@
 {% block content %}
+{% load static %}
+
+<script>
+    var CLASSE_CSS_SELECIONADO = 'selecionado';
+    var ITEM_TEMPLATE = '';
+    var CARREGANDO = '';
+    var tipoAtivo = '{{ tipo_ativo.id }}';
+    var containerItens = null;
+
+    function aplicaItens(itens) {
+        var html = '';
+        for(item of itens) {
+            var campos = item.fields;
+            html += ITEM_TEMPLATE.format(
+                campos.imagem,
+                campos.nome,
+                campos.descricao,
+                campos.preco
+            );
+        }
+        containerItens.html(html);
+    }
+
+    function trocaTipo(tipoSelecionado) {
+        $('#seletor-tipo-' + tipoAtivo).removeClass(CLASSE_CSS_SELECIONADO);
+        $('#seletor-tipo-' + tipoSelecionado).addClass(CLASSE_CSS_SELECIONADO);
+        tipoAtivo = tipoSelecionado;
+        containerItens.html('Carregando...');
+        $.ajax({
+            url: '/cardapio/categoria?tipo=' + tipoSelecionado,
+            method: 'GET'
+        }).done(function(response) {
+            aplicaItens(JSON.parse(response));
+        });
+    }
+    $(document).ready(function() {
+        $.ajax({
+            url: "{% static 'html/cardapio_item.html' %}",
+            method: 'GET'
+        }).done(function(response) {
+            ITEM_TEMPLATE = response;
+            containerItens = $('#cardapio-items');
+            CARREGANDO = containerItens.html();
+            trocaTipo(tipoAtivo);
+        });
+    });
+</script>
 <div id="texto">
     <p>Selecione os itens do pedido</p>
 </div>
@@ -7,7 +54,7 @@
     <ul class="tipos">
         {% for tipo in tipos%}
         <li class="tipositem">
-            <a href="?tipo={{tipo.id}}" {% if tipo.tipo == tipo_ativo.tipo%}class="selecionado"{% endif %}>
+            <a href="javascript://" onclick="trocaTipo('{{tipo.id}}');" id="seletor-tipo-{{tipo.id}}">
                 {{ tipo.tipo }}
             </a>
         </li>
@@ -16,22 +63,6 @@
 </div>
 
 <div class="container-pizzas">
-    <section class="grid grid-3-columns">
-        {% for produto in produtos %}
-        <div class="card-pizza">
-            <div class="card-image" style="background-image: url('{{ produto.imagem }}');">
-            </div>
-            <p class="sabor-pizza">{{ produto.nome }}</p>
-            <p class="descricao-pizza">{{ produto.descricao }}</p>
-            <div class="valor-pizza">
-                <p class="porcao-pizza">pizza inteira</p>
-                <p class="preco-pizza">R${{ produto.preco|floatformat:"2" }}</p>
-            </div>
-            <!-- <div class="quantidade">
-                <p>Selecione a quantidade</p>
-            </div> -->
-        </div>
-        {% endfor %}
-    </section>
+    <section class="grid grid-3-columns" id="cardapio-items"></section>
 </div>
 {% endblock%}
