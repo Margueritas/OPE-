@@ -21,7 +21,8 @@
             <p>telefone: {{ usuario.telefone }}</p>
         </div>
         <div style="display: flex; justify-content: end; padding-right: 10px;">
-            <button class="botao-clientes">
+            <button class="botao-clientes" data-bs-toggle="modal" data-bs-target="#modalConfirmarDelete"
+                onclick="openModalDeleteUser('{{ usuario.nome }}', '{{ usuario.sobrenome }}', '{{ usuario.email }}');">
                 <span class="material-icons">delete_outline</span>
                 <span class="label-botao-clientes">excluir</span>
             </button>
@@ -40,16 +41,18 @@
 {% endblock%}
 
 <script>
+function openModalDeleteUser(name, surname, email) {
+    $('#cliente-nome').html(name);
+    $('#cliente-sobrenome').html(surname);
+    $('#email-to-delete').val(email);
+    $('#form-delete').attr('action', '/clientes/delete/' + escape(email));
+}
 $(document).ready(
     $("#botao-add-cliente").click(function(e) {
         window.location.href = "/clientes/cadastro";
     })
 );
 </script>
-
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalConfirmarDelete">
-    Launch static backdrop modal
-  </button>
 
 <div class="modal" tabindex="-1" id="modalConfirmarDelete"
     data-bs-backdrop="static" data-bs-keyboard="false">
@@ -60,11 +63,18 @@ $(document).ready(
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <p>Deseja mesmo excluir o cliente {cliente}?</p>
+          <p>Deseja mesmo excluir o cliente
+            <span id="cliente-nome"></span>
+            <span id="cliente-sobrenome"></span>
+            ?
+          </p>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Sim</button>
-          <button type="button" class="btn btn-secondary">Não</button>
+          <form method="get" action="/none" id="form-delete">
+            <input type="hidden" name="do-delete" value="true"/>
+            <button type="submit" class="btn btn-danger">Sim</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Não</button>
+          </form>
         </div>
       </div>
     </div>

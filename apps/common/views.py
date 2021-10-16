@@ -15,6 +15,10 @@ def clientes(request):
     usuarios = Usuario.objects.all()
     return render(request, 'painel.html', context={'view': 'clientes.html', 'title': 'Clientes', 'usuarios': usuarios})
 
+def clientes_delete(request, email):
+    Usuario.objects.filter(email=email).delete()
+    return clientes(request)
+
 def clientes_cadastro(request):
     return render(request, 'painel.html', context={'view': 'clientes_cadastro.html', 'title': 'Cadastrar cliente'})
 
