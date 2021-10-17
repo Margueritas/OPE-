@@ -1,7 +1,6 @@
-from django.shortcuts import render,redirect, get_list_or_404
-from apps.common import carrinho
+from django.shortcuts import render,redirect
 from apps.common.models import Usuario, ProdutoTipo, Produto
-from apps.common.carrinho import get_carrinho_dict
+from apps.common.carrinho import get_carrinho_dict, save_carrinho_dict
 from django.http import HttpRequest, HttpResponse
 import json
 
@@ -32,12 +31,16 @@ def clientes_inserir(request:HttpRequest):
 def carrinho_editar(request:HttpRequest, id, quantidade) -> HttpResponse:
     carrinho = get_carrinho_dict(request)
     carrinho[id] = quantidade
-    return HttpResponse(json.dumps(carrinho))
+    resp = HttpResponse(json.dumps(carrinho))
+    save_carrinho_dict(resp, carrinho)
+    return resp
 
 def carrinho_deletar(request:HttpRequest, id) -> HttpResponse:
     carrinho = get_carrinho_dict(request)
     del carrinho[id]
-    return HttpResponse(json.dumps(carrinho))
+    resp = HttpResponse(json.dumps(carrinho))
+    save_carrinho_dict(resp, carrinho)
+    return resp
 
 def carrinho_carregar(request:HttpRequest) -> HttpResponse:
     return HttpResponse(json.dumps(get_carrinho_dict(request)))
