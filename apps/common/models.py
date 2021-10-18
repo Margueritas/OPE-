@@ -45,6 +45,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(blank=True, null=True, unique=True)
     rg = models.CharField(_('rg'), max_length=12, null=True, blank=True)
     cpf = models.CharField(_('cpf'), max_length=11, null=True, blank=True)
+    endereco = models.ManyToManyField('Endereco', through='UsuarioEndereco', through_fields=('idcliente', 'idendereco'), )
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
 
@@ -145,7 +146,7 @@ class ProdutoPedido(models.Model):
 
 class UsuarioEndereco(models.Model):
     idcliente = models.ForeignKey(Usuario, models.DO_NOTHING, db_column='idcliente')
-    idendereco = models.ForeignKey(Endereco, models.DO_NOTHING, db_column='idendereco')
+    idendereco = models.ForeignKey(Endereco, models.CASCADE, db_column='idendereco')
     primario = models.BooleanField(blank=True, null=True)
 
     class Meta:
