@@ -17,16 +17,17 @@
     <div class="app-card">
         <div class="card-dados-cliente">
             <p style="font-weight: bold;">{{ usuario.nome }} {{ usuario.sobrenome }}</p>
-            <p>CPF: {{ usuario.cpf }}</p>
+            <!-- <p>CPF: {{ usuario.cpf }}</p> -->
             <p>telefone: {{ usuario.telefone }}</p>
+            <p>{{ usuario.rua }}</p>
         </div>
         <div style="display: flex; justify-content: end; padding-right: 10px;">
             <button class="botao-clientes" data-bs-toggle="modal" data-bs-target="#modalConfirmarDelete"
-                onclick="openModalDeleteUser('{{ usuario.nome }}', '{{ usuario.sobrenome }}', '{{ usuario.email }}');">
+                onclick="openModalDeleteUser('{{ usuario.pk }}', '{{ usuario.nome }}', '{{ usuario.sobrenome }}', '{{ usuario.telefone }}');">
                 <span class="material-icons">delete_outline</span>
                 <span class="label-botao-clientes">excluir</span>
             </button>
-            <button class="botao-clientes">
+            <button class="botao-clientes" onclick="editar('{{usuario.pk}}')">
                 <span class="material-icons">edit</span>
                 <span class="label-botao-clientes">editar</span>
             </button>
@@ -41,12 +42,16 @@
 {% endblock%}
 
 <script>
-function openModalDeleteUser(name, surname, email) {
-    $('#cliente-nome').html(name);
-    $('#cliente-sobrenome').html(surname);
-    $('#email-to-delete').val(email);
-    $('#form-delete').attr('action', '/clientes/delete/' + escape(email));
+function openModalDeleteUser(pk, nome, sobrenome) {
+    $('#cliente-nome').html(nome);
+    $('#cliente-sobrenome').html(sobrenome);
+    $('#form-delete').attr('action', '/clientes/delete/' + escape(pk));
 }
+
+function editar(pk) {
+    window.location.href = "/clientes/" + pk;
+}
+
 $(document).ready(
     $("#botao-add-cliente").click(function(e) {
         window.location.href = "/clientes/cadastro";

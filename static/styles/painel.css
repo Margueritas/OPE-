@@ -332,7 +332,7 @@ form {
 }
 
 .divformgroup input#nome, input#sobrenome, input#telefone,
-input#cep, input#endereco, input#numero, input#complemento,
+input#cep, input#rua, input#numero, input#complemento,
 input#bairro, input#cidade {
     width: 100%;
     margin-top:10px;
