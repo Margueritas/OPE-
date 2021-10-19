@@ -1,8 +1,9 @@
 from django.http import JsonResponse
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect, get_list_or_404
 from apps.common.models import Endereco, Usuario, ProdutoTipo, Produto, UsuarioEndereco
 from apps.common.carrinho import get_carrinho_dict, save_carrinho_dict
 from django.http import HttpRequest, HttpResponse
+from django.core import serializers
 import json
 
 # Create your views here.
@@ -121,16 +122,20 @@ def clientes_editar(request):
         resposta = {"status": "erro"}
     return JsonResponse(resposta)
 
-def cardapio(request):
+def cardapio(request:HttpRequest) -> HttpResponse:
     tipos_produtos = ProdutoTipo.objects.all()
     tipo_selecionado = request.GET.get("tipo")
+    tipo_ativo: ProdutoTipo
     if not tipo_selecionado:
         tipo_ativo = ProdutoTipo.objects.get(tipo="Pizzas Salgadas")
-        produtos = Produto.objects.filter(idtipo=tipo_ativo)
     else:
         tipo_ativo = ProdutoTipo.objects.get(id=tipo_selecionado)
-        produtos = Produto.objects.filter(idtipo=tipo_ativo)
-    return render(request, 'painel.html', context={'view': 'cardapio.html', 'title': 'Cardápio', 'tipos': tipos_produtos, "tipo_ativo": tipo_ativo, 'produtos': produtos})
+    return render(request, 'painel.html', context={'view': 'cardapio.html', 'title': 'Cardápio', 'tipos': tipos_produtos, "tipo_ativo": tipo_ativo})
 
-def pedidos(request):
+def cardapio_categoria(request:HttpRequest) -> HttpResponse:
+    tipo_desejado = request.GET.get("tipo")
+    tipo = ProdutoTipo.objects.get(id=tipo_desejado)
+    return HttpResponse(serializers.serialize('json', (get_list_or_404(Produto, idtipo=tipo))))
+
+def pedidos(request:HttpRequest) -> HttpResponse:
     return render(request, 'painel.html', context={'view': 'pedidos.html', 'title': 'Pedidos'})
