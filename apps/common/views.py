@@ -1,18 +1,22 @@
 from django.http import JsonResponse
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect, get_list_or_404
 from apps.common.models import Endereco, Usuario, ProdutoTipo, Produto, UsuarioEndereco
+from apps.common.carrinho import get_carrinho_dict, save_carrinho_dict
+from django.http import HttpRequest, HttpResponse
+from django.core import serializers
+import json
 
 # Create your views here.
-def index(request):
+def index(request:HttpRequest) -> HttpResponse:
     if request.user.is_authenticated:
         return redirect('painel')
     else:
         return redirect('login')
 
-def painel(request):
+def painel(request:HttpRequest) -> HttpResponse:
     return render(request, 'painel.html', context={'view': 'pedidos.html', 'title': 'Pedidos'})
 
-def clientes(request):
+def clientes(request:HttpRequest) -> HttpResponse:
     usuarios = Usuario.objects.filter(is_staff=False)
     lista_usuarios = []
     for usuario in usuarios:
@@ -30,7 +34,7 @@ def clientes(request):
             lista_usuarios.append(u)
     return render(request, 'painel.html', context={'view': 'clientes.html', 'title': 'Clientes', 'usuarios': lista_usuarios})
 
-def clientes_delete(request, pk):
+def clientes_delete(request:HttpRequest, pk):
     try:
         enderecos_para_apagar = Endereco.objects.filter(id__in=UsuarioEndereco.objects.filter(idcliente=pk).all().values_list('idendereco', flat=True)).all()
         for endereco in enderecos_para_apagar:
@@ -52,8 +56,25 @@ def clientes_pagina_editar(request, pk):
     }
     return render(request, 'painel.html', context={'view': 'clientes_editar.html', 'title': 'Editar cliente', 'dados': retorno})
 
-def clientes_cadastro(request):
+def clientes_cadastro(request:HttpRequest) -> HttpResponse:
     return render(request, 'painel.html', context={'view': 'clientes_cadastro.html', 'title': 'Cadastrar cliente'})
+
+def carrinho_editar(request:HttpRequest, id, quantidade) -> HttpResponse:
+    carrinho = get_carrinho_dict(request)
+    carrinho[id] = quantidade
+    resp = HttpResponse(json.dumps(carrinho))
+    save_carrinho_dict(resp, carrinho)
+    return resp
+
+def carrinho_deletar(request:HttpRequest, id) -> HttpResponse:
+    carrinho = get_carrinho_dict(request)
+    del carrinho[id]
+    resp = HttpResponse(json.dumps(carrinho))
+    save_carrinho_dict(resp, carrinho)
+    return resp
+
+def carrinho_carregar(request:HttpRequest) -> HttpResponse:
+    return HttpResponse(json.dumps(get_carrinho_dict(request)))
 
 def clientes_inserir(request):
     _ = request.POST
@@ -101,16 +122,20 @@ def clientes_editar(request):
         resposta = {"status": "erro"}
     return JsonResponse(resposta)
 
-def cardapio(request):
+def cardapio(request:HttpRequest) -> HttpResponse:
     tipos_produtos = ProdutoTipo.objects.all()
     tipo_selecionado = request.GET.get("tipo")
+    tipo_ativo: ProdutoTipo
     if not tipo_selecionado:
         tipo_ativo = ProdutoTipo.objects.get(tipo="Pizzas Salgadas")
-        produtos = Produto.objects.filter(idtipo=tipo_ativo)
     else:
         tipo_ativo = ProdutoTipo.objects.get(id=tipo_selecionado)
-        produtos = Produto.objects.filter(idtipo=tipo_ativo)
-    return render(request, 'painel.html', context={'view': 'cardapio.html', 'title': 'Cardápio', 'tipos': tipos_produtos, "tipo_ativo": tipo_ativo, 'produtos': produtos})
+    return render(request, 'painel.html', context={'view': 'cardapio.html', 'title': 'Cardápio', 'tipos': tipos_produtos, "tipo_ativo": tipo_ativo})
 
-def pedidos(request):
+def cardapio_categoria(request:HttpRequest) -> HttpResponse:
+    tipo_desejado = request.GET.get("tipo")
+    tipo = ProdutoTipo.objects.get(id=tipo_desejado)
+    return HttpResponse(serializers.serialize('json', (get_list_or_404(Produto, idtipo=tipo))))
+
+def pedidos(request:HttpRequest) -> HttpResponse:
     return render(request, 'painel.html', context={'view': 'pedidos.html', 'title': 'Pedidos'})
