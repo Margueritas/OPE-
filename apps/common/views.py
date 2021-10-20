@@ -59,9 +59,50 @@ def clientes_pagina_editar(request, pk):
 def clientes_cadastro(request:HttpRequest) -> HttpResponse:
     return render(request, 'painel.html', context={'view': 'clientes_cadastro.html', 'title': 'Cadastrar cliente'})
 
-def carrinho_editar(request:HttpRequest, id, quantidade) -> HttpResponse:
+def carrinho_editar(request:HttpRequest, id_produto: int, quantidade: float, id_item: int) -> HttpResponse:
+    id_produto = int(id_produto)
+    quantidade = float(quantidade)
+    id_item = int(id_item)
     carrinho = get_carrinho_dict(request)
-    carrinho[id] = quantidade
+    if id_item == -1:
+        # item novo
+        ultimo_item = -1
+        for item in carrinho:
+            if item['id_item'] > ultimo_item:
+                ultimo_item = item['id_item']
+        ultimo_item = ultimo_item + 1
+        if quantidade == 1:
+            item_novo = {'id_item': ultimo_item, 'produtos': []}
+            item_novo['produtos'].append({'id_produto': id_produto, 'quantidade': quantidade})
+            carrinho.append(item_novo)
+        else:
+            encontrado = False
+            for item in carrinho:
+                if encontrado:
+                    break
+                for produto in item['produtos']:
+                    if produto['quantidade'] < 1 and len(item['produtos']) < 2:
+                        encontrado = True
+                        item['produtos'].append({'id_produto': id_produto, 'quantidade': quantidade})
+                        break
+            if not encontrado:
+                item_novo = {'id_item': ultimo_item, 'produtos': []}
+                item_novo['produtos'].append({'id_produto': id_produto, 'quantidade': quantidade})
+                carrinho.append(item_novo)
+    else:
+        #acha item e modifica/adiciona
+        item_encontrado = None
+        for item in carrinho:
+            if item['id_item'] == id_item:
+                item_encontrado = item
+                break
+        if quantidade == 1 \
+            or len(item_encontrado['produtos']) > 1 \
+            or (len(item_encontrado['produtos']) == 1 \
+            and item_encontrado['produtos'][0]['quantidade'] == 1):
+            item_encontrado['produtos'] = [{'id_produto': id_produto, 'quantidade': quantidade}]
+        else:
+            item_encontrado['produtos'].append({'id_produto': id_produto, 'quantidade': quantidade})
     resp = HttpResponse(json.dumps(carrinho))
     save_carrinho_dict(resp, carrinho)
     return resp
@@ -76,7 +117,7 @@ def carrinho_deletar(request:HttpRequest, id) -> HttpResponse:
 def carrinho_carregar(request:HttpRequest) -> HttpResponse:
     return HttpResponse(json.dumps(get_carrinho_dict(request)))
 
-def clientes_inserir(request):
+def clientes_inserir(request:HttpRequest) -> HttpResponse:
     _ = request.POST
     try:
         endereco = Endereco.objects.create(
@@ -99,7 +140,7 @@ def clientes_inserir(request):
         resposta = {'status': Exception}
     return JsonResponse(resposta)
 
-def clientes_editar(request):
+def clientes_editar(request:HttpRequest) -> HttpResponse:
     _ = request.POST
     try:
         Usuario.objects.filter(id=_['pk']).update(
