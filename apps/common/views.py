@@ -107,9 +107,18 @@ def carrinho_editar(request:HttpRequest, id_produto: int, quantidade: float, id_
     save_carrinho_dict(resp, carrinho)
     return resp
 
-def carrinho_deletar(request:HttpRequest, id) -> HttpResponse:
+def carrinho_deletar(request:HttpRequest, id:int) -> HttpResponse:
+    id = int(id)
     carrinho = get_carrinho_dict(request)
-    del carrinho[id]
+    posicao = None
+    i = 0
+    for item in carrinho:
+        if item['id_item'] == id:
+            posicao = i
+            break
+        else:
+            i = i + 1
+    del carrinho[posicao]
     resp = HttpResponse(json.dumps(carrinho))
     save_carrinho_dict(resp, carrinho)
     return resp
