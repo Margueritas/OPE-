@@ -32,6 +32,10 @@ div #titulo h2{
     cursor:default;  
 }
 
+#auxiliar {
+    float: right;
+}
+
 
 .app-container{
     display: flex;
