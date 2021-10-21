@@ -24,7 +24,9 @@
             <div id="titulo">
                 <h2>{{ title }}</h2>
                 <div id="auxiliar">
-                    teste
+                    {% block auxiliar %}
+                    {% include auxiliar %}
+                    {% endblock %}
                 </div>
             </div>
             {% block content %}
