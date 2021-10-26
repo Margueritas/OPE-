@@ -32,6 +32,12 @@ div #titulo h2{
     cursor:default;  
 }
 
+#auxiliar {
+    margin-top: 13px;
+    float: right;
+    display: inline;
+}
+
 
 .app-container{
     display: flex;
@@ -164,6 +170,56 @@ margin-bottom: 20px;
     border: none;
     outline: none;
     margin: 0;
+    padding-right: 15px;
+    text-align: center;
+    font-size: medium;
+}
+
+#pizza-busca-execute{
+    /* margin-left: 20px; */
+    background: #C84B31;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    font-size: medium;
+    border: none;
+    width: 50px;
+    height: 40px;
+    font-family: 'Quicksand', sans-serif;
+    cursor: pointer;
+    display: inline;
+    vertical-align: middle;
+}
+
+#botao-pesquisar-cardapio{
+    width: 300px;
+    height: 50px;
+    border-radius: 7px;
+    border: 1px solid #999;
+    outline-color: #C84B31;
+    padding-top: 0px;
+    padding-bottom: 11px;
+    padding-left: 8px;
+    margin-top: 0;
+    display: inline-flex;
+    /* align-items: center; */
+    vertical-align: middle;
+}
+
+#icone-busca-cardapio{
+    margin-top:13px;
+    margin-left: 5px;
+}
+
+#pizza-busca {
+    width: 85%;
+    height: 40px;
+    border: none;
+    outline: none;
+    margin: 0;
+    margin-top: 4px;
+    padding: 0;
+    padding-right: 15px;
     text-align: center;
     font-size: medium;
 }

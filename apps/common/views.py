@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render,redirect, get_list_or_404
 from apps.common.models import Endereco, Usuario, ProdutoTipo, Produto, UsuarioEndereco
@@ -14,7 +15,8 @@ def index(request:HttpRequest) -> HttpResponse:
         return redirect('login')
 
 def painel(request:HttpRequest) -> HttpResponse:
-    return render(request, 'painel.html', context={'view': 'pedidos.html', 'title': 'Pedidos'})
+    return render(request, 'painel.html', \
+        context={'view': 'pedidos.html', 'title': 'Pedidos', 'auxiliar': 'blank.html'})
 
 def clientes(request:HttpRequest) -> HttpResponse:
     usuarios = Usuario.objects.filter(is_staff=False)
@@ -32,11 +34,36 @@ def clientes(request:HttpRequest) -> HttpResponse:
             'rua': e.logradouro,
             }
             lista_usuarios.append(u)
-    return render(request, 'painel.html', context={'view': 'clientes.html', 'title': 'Clientes', 'usuarios': lista_usuarios})
+    return render(request, 'painel.html', \
+        context={'view': 'clientes.html', 'title': 'Clientes', \
+            'usuarios': lista_usuarios, 'auxiliar': 'blank.html'})
+
+def clientes_busca(request):
+    pesquisa = request.GET['pesquisa']
+    if pesquisa == '':
+        clientes_filtrados = Usuario.objects.filter(is_staff=False)
+    else:
+        clientes_filtrados = Usuario.objects.filter(Q(nome__icontains=pesquisa) | Q(telefone__icontains=pesquisa) & Q(is_staff=False))
+    resposta_clientes = []
+    for cliente in clientes_filtrados:
+        endereco_cliente_pk = UsuarioEndereco.objects.filter(idcliente=cliente.pk,primario=True).values_list('idendereco', flat=True)
+        if len(endereco_cliente_pk) > 0:
+            endereco = Endereco.objects.get(id=endereco_cliente_pk[0])
+            obj_cliente = {
+            'pk': cliente.pk,
+            'nome': cliente.nome,
+            'sobrenome': cliente.sobrenome,
+            'telefone': cliente.telefone,
+            'rua': endereco.logradouro,
+            'numero': endereco.numero,
+            }
+            resposta_clientes.append(obj_cliente)
+    return JsonResponse({"clientes": resposta_clientes}, safe=False)
 
 def clientes_delete(request:HttpRequest, pk):
     try:
-        enderecos_para_apagar = Endereco.objects.filter(id__in=UsuarioEndereco.objects.filter(idcliente=pk).all().values_list('idendereco', flat=True)).all()
+        enderecos_para_apagar = Endereco.objects.filter( \
+            id__in=UsuarioEndereco.objects.filter(idcliente=pk).all().values_list('idendereco', flat=True)).all()
         for endereco in enderecos_para_apagar:
             endereco.delete()
         Usuario.objects.get(id=pk).delete()
@@ -54,10 +81,12 @@ def clientes_pagina_editar(request, pk):
         "usuario": usuario,
         "enderecos": enderecos_lista
     }
-    return render(request, 'painel.html', context={'view': 'clientes_editar.html', 'title': 'Editar cliente', 'dados': retorno})
+    return render(request, 'painel.html', context={'view': 'clientes_editar.html', \
+        'title': 'Editar cliente', 'dados': retorno, 'auxiliar': 'blank.html'})
 
 def clientes_cadastro(request:HttpRequest) -> HttpResponse:
-    return render(request, 'painel.html', context={'view': 'clientes_cadastro.html', 'title': 'Cadastrar cliente'})
+    return render(request, 'painel.html', context={'view': 'clientes_cadastro.html', \
+        'title': 'Cadastrar cliente', 'auxiliar': 'blank.html'})
 
 def carrinho_editar(request:HttpRequest, id, quantidade) -> HttpResponse:
     carrinho = get_carrinho_dict(request)
@@ -93,7 +122,8 @@ def clientes_inserir(request):
             telefone = _['telefone'],
         )
         novo_cliente.endereco.add(endereco)
-        UsuarioEndereco.objects.filter(idcliente=novo_cliente.pk, idendereco=endereco.pk).update(primario=True)
+        UsuarioEndereco.objects.filter(idcliente=novo_cliente.pk, \
+            idendereco=endereco.pk).update(primario=True)
         resposta = {'status': 'sucesso'}
     except:
         resposta = {'status': Exception}
@@ -107,7 +137,8 @@ def clientes_editar(request):
             sobrenome = _['sobrenome'],
             telefone = _['telefone'],
             )
-        idendereco = UsuarioEndereco.objects.filter(idcliente=_["pk"], primario=True).values_list('idendereco', flat=True)
+        idendereco = UsuarioEndereco.objects.filter( \
+            idcliente=_["pk"], primario=True).values_list('idendereco', flat=True)
         if len(idendereco) > 0:
             Endereco.objects.filter(id=idendereco[0]).update(
                 logradouro = _['rua'],
@@ -130,12 +161,19 @@ def cardapio(request:HttpRequest) -> HttpResponse:
         tipo_ativo = ProdutoTipo.objects.get(tipo="Pizzas Salgadas")
     else:
         tipo_ativo = ProdutoTipo.objects.get(id=tipo_selecionado)
-    return render(request, 'painel.html', context={'view': 'cardapio.html', 'title': 'Cardápio', 'tipos': tipos_produtos, "tipo_ativo": tipo_ativo})
+    return render(request, 'painel.html', context={'view': 'cardapio.html', \
+        'title': 'Cardápio', 'tipos': tipos_produtos, \
+            "tipo_ativo": tipo_ativo, 'auxiliar': 'cardapio_busca.html'})
 
-def cardapio_categoria(request:HttpRequest) -> HttpResponse:
+def cardapio_busca(request:HttpRequest) -> HttpResponse:
     tipo_desejado = request.GET.get("tipo")
+    pesquisa = request.GET.get('pesquisa')
+    if pesquisa is None:
+        pesquisa = ''
     tipo = ProdutoTipo.objects.get(id=tipo_desejado)
-    return HttpResponse(serializers.serialize('json', (get_list_or_404(Produto, idtipo=tipo))))
+    produtos_buscados = Produto.objects.filter(idtipo=tipo, nome__icontains=pesquisa)
+    return HttpResponse(serializers.serialize('json', produtos_buscados, fields=('nome', 'descricao', 'preco', 'imagem', 'idtipo')))
 
 def pedidos(request:HttpRequest) -> HttpResponse:
-    return render(request, 'painel.html', context={'view': 'pedidos.html', 'title': 'Pedidos'})
+    return render(request, 'painel.html', context={ \
+        'view': 'pedidos.html', 'title': 'Pedidos', 'auxiliar': 'blank.html'})
