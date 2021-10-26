@@ -27,7 +27,7 @@ function alteraNoCarrinho(idItem, quantidade) {
 function carregaCarrinho(jQueryAjaxObj) {
     jQueryAjaxObj.done(function(response) {
         carrinho = JSON.parse(response);
-        alert('protótipo: seu carrinho consiste de (JSON) -> '+ JSON.stringify(carrinho));
+        // alert('protótipo: seu carrinho consiste de (JSON) -> '+ JSON.stringify(carrinho));
     });
 }
 
@@ -63,7 +63,7 @@ $(document).ready(function() {
     } else {
       return;
     }
-    if(termoPesquisa.length == 0 || termoPesquisa.length >= 3) {
+    if(termoPesquisa.length == 0 || termoPesquisa.length >= 2) {
       trocaTipo(tipoAtivo);
     }
   };
@@ -93,7 +93,7 @@ $(document).ready(function() {
     tipoAtivo = tipoSelecionado;
     containerItens.html(CARREGANDO);
     $.ajax({
-      url: '/cardapio/categoria?tipo=' + tipoSelecionado + '&pesquisa=' + termoPesquisa,
+      url: '/cardapio/busca?tipo=' + tipoSelecionado + '&pesquisa=' + termoPesquisa,
       method: 'GET'
     }).done(function(response) {
       aplicaItens(JSON.parse(response));

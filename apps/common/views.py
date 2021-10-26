@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render,redirect, get_list_or_404
 from apps.common.models import Endereco, Usuario, ProdutoTipo, Produto, UsuarioEndereco
@@ -36,6 +37,28 @@ def clientes(request:HttpRequest) -> HttpResponse:
     return render(request, 'painel.html', \
         context={'view': 'clientes.html', 'title': 'Clientes', \
             'usuarios': lista_usuarios, 'auxiliar': 'blank.html'})
+
+def clientes_busca(request):
+    pesquisa = request.GET['pesquisa']
+    if pesquisa == '':
+        clientes_filtrados = Usuario.objects.filter(is_staff=False)
+    else:
+        clientes_filtrados = Usuario.objects.filter(Q(nome__icontains=pesquisa) | Q(telefone__icontains=pesquisa) & Q(is_staff=False))
+    resposta_clientes = []
+    for cliente in clientes_filtrados:
+        endereco_cliente_pk = UsuarioEndereco.objects.filter(idcliente=cliente.pk,primario=True).values_list('idendereco', flat=True)
+        if len(endereco_cliente_pk) > 0:
+            endereco = Endereco.objects.get(id=endereco_cliente_pk[0])
+            obj_cliente = {
+            'pk': cliente.pk,
+            'nome': cliente.nome,
+            'sobrenome': cliente.sobrenome,
+            'telefone': cliente.telefone,
+            'rua': endereco.logradouro,
+            'numero': endereco.numero,
+            }
+            resposta_clientes.append(obj_cliente)
+    return JsonResponse({"clientes": resposta_clientes}, safe=False)
 
 def clientes_delete(request:HttpRequest, pk):
     try:
@@ -142,14 +165,14 @@ def cardapio(request:HttpRequest) -> HttpResponse:
         'title': 'Cardápio', 'tipos': tipos_produtos, \
             "tipo_ativo": tipo_ativo, 'auxiliar': 'cardapio_busca.html'})
 
-def cardapio_categoria(request:HttpRequest) -> HttpResponse:
+def cardapio_busca(request:HttpRequest) -> HttpResponse:
     tipo_desejado = request.GET.get("tipo")
     pesquisa = request.GET.get('pesquisa')
     if pesquisa is None:
         pesquisa = ''
     tipo = ProdutoTipo.objects.get(id=tipo_desejado)
-    return HttpResponse(serializers.serialize('json', \
-        (get_list_or_404(Produto, idtipo=tipo, nome__icontains=pesquisa))))
+    produtos_buscados = Produto.objects.filter(idtipo=tipo, nome__icontains=pesquisa)
+    return HttpResponse(serializers.serialize('json', produtos_buscados, fields=('nome', 'descricao', 'preco', 'imagem', 'idtipo')))
 
 def pedidos(request:HttpRequest) -> HttpResponse:
     return render(request, 'painel.html', context={ \

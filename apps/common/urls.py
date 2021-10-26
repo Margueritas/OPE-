@@ -16,10 +16,11 @@ urlpatterns = [
     path('clientes/editar/', views.clientes_editar, name='clientes_editar'),
     path('clientes/delete/<pk>', views.clientes_delete, name='clientes_delete'),
     path('clientes/inserir', views.clientes_inserir, name='clientes_inserir'),
+    path('clientes/busca', views.clientes_busca, name="clientes_busca"),
     path('carrinho/deletar/<id>', views.carrinho_deletar, name='carrinho_deletar'),
     path('carrinho/editar/<id>/<quantidade>', views.carrinho_editar, name='carrinho_editar'),
     path('carrinho/carregar', views.carrinho_carregar, name='carrinho_carregar'),
     path('cardapio/', views.cardapio, name='cardapio'),
-    path('cardapio/categoria', views.cardapio_categoria, name='cardapio_categoria'),
+    path('cardapio/busca', views.cardapio_busca, name='cardapio_busca'),
     path('pedidos/', views.pedidos, name='pedidos'),
 ]
