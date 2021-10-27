@@ -98,6 +98,10 @@ margin-bottom: 20px;
     padding-right: 50px;
 }
 
+.item-card-dados-cliente {
+    width: 30%;
+}
+
 /* #excluir, #novo-pedido, #editar{
     display: flex;
     flex-direction: row;
@@ -287,9 +291,9 @@ li.tipositem a.selecionado {
     /* flex-direction: column; */
     /* width: 200px; */
     display: grid;
-    grid-template-rows: 160px 55px 65px;
+    grid-template-rows: 160px 50px 70px 30px 30px;
     padding-bottom: 20px;
-    height: 320px;
+    height: 355px;
     background: #FFFFFF;
     box-shadow: 10px 10px 10px rgba(68, 67, 67, 0.06);
     border-radius: 4px;
@@ -310,22 +314,35 @@ li.tipositem a.selecionado {
     padding-left: 10px;
 }
 
-.porcao-pizza{
-    margin-left: 20px;
-    font-weight: bold;
-    font-size: 15px;
-}
-
 .valor-pizza{
     display: flex ;
-    align-items:flex-end;
-    justify-content:start;
+    /* align-items: center; */
+    justify-content: space-around;
+    margin-bottom: 0;
 }
 
-.preco-pizza {
-    margin-left: 65px;
+.pizza-mei{
+    /* margin-left: 20px; */
     font-weight: bold;
     font-size: 15px;
+}
+
+.pizza-int {
+    /* margin-left: 65px; */
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.botoes-pizza {
+    display: flex;
+    justify-content: space-around;
+}
+
+.btn-pizza {
+    background-color: #C84B31 !important;
+    color: white !important;
+    font-weight: bold !important;
+    width: 80px;
 }
 
 .card-image{

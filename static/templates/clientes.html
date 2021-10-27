@@ -16,10 +16,10 @@
     {% for usuario in usuarios %}
     <div class="app-card">
         <div class="card-dados-cliente">
-            <p style="font-weight: bold;">{{ usuario.nome }} {{ usuario.sobrenome }}</p>
+            <p class="item-card-dados-cliente" style="font-weight: bold;">{{ usuario.nome }} {{ usuario.sobrenome }}</p>
             <!-- <p>CPF: {{ usuario.cpf }}</p> -->
-            <p>telefone: {{ usuario.telefone }}</p>
-            <p>{{ usuario.rua }}</p>
+            <p class="item-card-dados-cliente">{{ usuario.telefone }}</p>
+            <p class="item-card-dados-cliente">{{ usuario.rua }}, {{ usuario.numero }}</p>
         </div>
         <div style="display: flex; justify-content: end; padding-right: 10px;">
             <button class="botao-clientes" data-bs-toggle="modal" data-bs-target="#modalConfirmarDelete"
@@ -86,9 +86,9 @@ $(document).ready(function(){
         var cliente = resp.clientes[index];
         string += `<div class="app-card">
         <div class="card-dados-cliente">
-            <p style="font-weight: bold;">${cliente.nome} ${cliente.sobrenome}</p>
-            <p>telefone: ${cliente.telefone}</p>
-            <p>${cliente.rua}, ${cliente.numero}</p>
+            <p class="item-card-dados-cliente" style="font-weight: bold;">${cliente.nome} ${cliente.sobrenome}</p>
+            <p class="item-card-dados-cliente">${cliente.telefone}</p>
+            <p class="item-card-dados-cliente">${cliente.rua}, ${cliente.numero}</p>
         </div>
         <div style="display: flex; justify-content: end; padding-right: 10px;">
             <button class="botao-clientes" data-bs-toggle="modal" data-bs-target="#modalConfirmarDelete"

@@ -3,7 +3,7 @@
     <form id="form-inserir-cliente" method="post">
         {% csrf_token %}
         <div class="divformgroup">
-            <label for="nome" class="labelcadastro">Nomes</label>
+            <label for="nome" class="labelcadastro">Nome</label>
             <input type="text" name="nome" id="nome" class="textinput">
         </div>
         <div class="divformgroup">
@@ -49,6 +49,9 @@
 </div>
 <script>
 $(document).ready(function() {
+    $("#modalCadastroSucesso").on("hidden.bs.modal", function () {
+        window.location.href = "/clientes/";
+    });
 
     function limpa_formulário_cep() {
         // Limpa valores do formulário de cep.
@@ -122,6 +125,9 @@ $(document).ready(function() {
     }
 
     $("#telefone").on('keyup change', function(e) {
+        if ($(this).val().length > 15) {
+            $(this).val($(this).val().substring(0,15));
+        }
         e.target.value = (mascaraTelefone(e.target.value));
     });
 
@@ -134,13 +140,35 @@ $(document).ready(function() {
         method: 'POST',
         }).done(function(response) {
             if(response.status === 'sucesso') {
-                window.location.href = "/clientes/";
+                $("#modalCadastroSucesso").modal('show');
             };
         });
         event.preventDefault();
     });
 });
 
+// var myModalEl = document.getElementById('modal')
+// myModalEl.addEventListener('hidden.bs.modal', function (event) {
+//   alert('fechou modal');
+// })
+
     
 </script>
+
+<div class="modal" tabindex="-1" id="modalCadastroSucesso" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title">Sucesso</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            <p>Cliente inserido com sucesso!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock%}
