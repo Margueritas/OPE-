@@ -175,7 +175,7 @@ def cardapio_busca(request:HttpRequest) -> HttpResponse:
         pesquisa = ''
     tipo = ProdutoTipo.objects.get(id=tipo_desejado)
     produtos_buscados = Produto.objects.filter(idtipo=tipo, nome__icontains=pesquisa)
-    return HttpResponse(serializers.serialize('json', produtos_buscados, fields=('nome', 'descricao', 'preco', 'imagem', 'idtipo')))
+    return HttpResponse(serializers.serialize('json', produtos_buscados, fields=('nome', 'descricao', 'preco', 'imagem', 'idtipo', 'preco_meio')))
 
 def pedidos(request:HttpRequest) -> HttpResponse:
     return render(request, 'painel.html', context={ \
