@@ -1,6 +1,33 @@
 {% block content %}
 {% load static %}
-
+<div style="position: absolute;top: 13px;right: 25px;">
+  <a href="#" onclick="
+    console.log($('#medida').height()+'px');
+    if($('#carrinho').css('height')==='0px'){
+      $('#carrinho').css({'visibility':'visible','opacity':'100','border':'1px solid #34675154','height':$('#medida').height()+'px','transition':'opacity 250ms, height 150ms ease-out'});
+    }
+    else {
+      $('#carrinho').css({'opacity':'0','border':'1px solid #white','height':'0','transition':'opacity 250ms, height 150ms ease-in, border-color 250ms ease'});
+      setTimeout(function(){
+        $('#carrinho').css({'border':'0','visibility':'collapse'});
+      }, 270);
+    };
+    $('#setacarrinho').toggleClass('d-none');
+    if($('#botao-carrinho').css('background-color').toString()=='rgb(52, 103, 81)') {
+      $('#botao-carrinho').css('background', '#ffffff').css('color', '#346751').css('transition','background-color 250ms ease-in');
+    }
+    else {
+      $('#botao-carrinho').css('background', '#346751').css('color', '#ffffff');
+    };">
+    <span id="botao-carrinho" class="material-icons" style="font-size: 35px; color: white; background: #346751;padding:12px;border-radius: 50%;">shopping_cart</span>
+  </a>
+</div>
+<div id="setacarrinho" class="d-none" style="position: absolute; top: 72px; right: 40px; width: 0; height: 0; border-left: 15px solid transparent;border-right: 15px solid transparent;border-bottom: 15px solid #34675154;"></div>
+<div id="carrinho" style="visibility:collapse; opacity: 0; height: 0; transition: height 300ms ease-out; width: 350px; position: absolute; top: 87px; right: 25px; background-color: white; border: 0px solid #34675154;">
+<div id='medida'>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+</div>
+</div>
 <script>
     var tipoAtivo = '{{ tipo_ativo.id }}';
     $(document).ready(function() {
