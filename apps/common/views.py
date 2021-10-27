@@ -24,14 +24,16 @@ def clientes(request:HttpRequest) -> HttpResponse:
     for usuario in usuarios:
         usuario_pk = UsuarioEndereco.objects.filter(idcliente=usuario.pk,primario=True).values_list('idendereco', flat=True)
         if len(usuario_pk) > 0:
+            tel = usuario.telefone
             e = Endereco.objects.get(id=usuario_pk[0])
             u = {
             'pk': usuario.pk,
             'nome': usuario.nome,
             'sobrenome': usuario.sobrenome,
             'cpf': usuario.cpf,
-            'telefone': usuario.telefone,
+            'telefone': f'({tel[0:2]}) {tel[2:7]}-{tel[7:]}',
             'rua': e.logradouro,
+            'numero': e.numero,
             }
             lista_usuarios.append(u)
     return render(request, 'painel.html', \
@@ -43,17 +45,18 @@ def clientes_busca(request):
     if pesquisa == '':
         clientes_filtrados = Usuario.objects.filter(is_staff=False)
     else:
-        clientes_filtrados = Usuario.objects.filter(Q(nome__icontains=pesquisa) | Q(telefone__icontains=pesquisa) & Q(is_staff=False))
+        clientes_filtrados = Usuario.objects.filter(Q(nome__icontains=pesquisa) | Q(sobrenome__icontains=pesquisa) | Q(telefone__icontains=pesquisa) & Q(is_staff=False))
     resposta_clientes = []
     for cliente in clientes_filtrados:
         endereco_cliente_pk = UsuarioEndereco.objects.filter(idcliente=cliente.pk,primario=True).values_list('idendereco', flat=True)
         if len(endereco_cliente_pk) > 0:
+            tel = cliente.telefone
             endereco = Endereco.objects.get(id=endereco_cliente_pk[0])
             obj_cliente = {
             'pk': cliente.pk,
             'nome': cliente.nome,
             'sobrenome': cliente.sobrenome,
-            'telefone': cliente.telefone,
+            'telefone': f'({tel[0:2]}) {tel[2:7]}-{tel[7:]}',
             'rua': endereco.logradouro,
             'numero': endereco.numero,
             }

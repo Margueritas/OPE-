@@ -82,7 +82,9 @@ $(document).ready(function() {
         campos.descricao,
         campos.preco,
         campos.id,
+        campos.idtipo,
       );
+      
     }
     containerItens.html(html);
   }
@@ -97,5 +99,18 @@ $(document).ready(function() {
       method: 'GET'
     }).done(function(response) {
       aplicaItens(JSON.parse(response));
+
+      if(JSON.parse(response)[1].fields.idtipo === 3) {
+        $(".btn-pizza-mei").addClass('d-none');
+        $(".btn-pizza-int").addClass('d-none');
+        $(".pizza-mei").addClass('d-none');
+        $(".btn-bebida").removeClass('d-none');
+      }
+      else{
+        $(".btn-pizza-mei").removeClass('d-none');
+        $(".btn-pizza-int").removeClass('d-none');
+        $(".pizza-mei").removeClass('d-none');
+        $(".btn-bebida").addClass('d-none');
+      }
     });
   }

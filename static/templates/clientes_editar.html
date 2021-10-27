@@ -4,7 +4,7 @@
         {% csrf_token %}
         <input type="hidden" name="pk" value="{{ dados.usuario.pk }}">
         <div class="divformgroup">
-            <label for="nome" class="labelcadastro">Nomes</label>
+            <label for="nome" class="labelcadastro">Nome</label>
             <input type="text" name="nome" id="nome" class="textinput" value="{{ dados.usuario.nome }}">
         </div>
         <div class="divformgroup">
