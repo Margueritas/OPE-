@@ -17,10 +17,10 @@
 <body>
     <div class="app-container">
         {% block sidebar %}
-        {% include 'sidebar.html' %}
+        {% include sidebar %}
         {% endblock %}
         
-        <div style="margin-left: 26.5%; width: 71.5%;">
+        <div style="margin-left: 26.5%; width: 71.5%;" id="content-div">
             <div id="titulo">
                 <h2>{{ title }}</h2>
                 <div id="auxiliar">

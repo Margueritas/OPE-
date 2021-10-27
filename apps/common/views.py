@@ -1,8 +1,8 @@
-from django.db.models import Q
 from django.http import JsonResponse
-from django.shortcuts import render,redirect, get_list_or_404
+from django.shortcuts import render,redirect
 from apps.common.models import Endereco, Usuario, ProdutoTipo, Produto, UsuarioEndereco
 from apps.common.carrinho import get_carrinho_dict, save_carrinho_dict
+from apps.common.clientes import load_cliente_data
 from django.http import HttpRequest, HttpResponse
 from django.core import serializers
 import json
@@ -16,51 +16,26 @@ def index(request:HttpRequest) -> HttpResponse:
 
 def painel(request:HttpRequest) -> HttpResponse:
     return render(request, 'painel.html', \
-        context={'view': 'pedidos.html', 'title': 'Pedidos', 'auxiliar': 'blank.html'})
+        context={'view': 'pedidos.html', 'title': 'Pedidos', \
+            'auxiliar': 'blank.html', 'sidebar': 'sidebar.html'})
+
+def clientes_modal(request:HttpRequest) -> HttpResponse:
+    lista_usuarios = load_cliente_data(None)
+    return render(request, 'painel.html', \
+        context={'view': 'clientes.html', 'title': 'Selecione um cliente', \
+            'usuarios': lista_usuarios, 'auxiliar': 'blank.html', \
+                'sidebar': 'blank.html', 'is_modal': '1'})
 
 def clientes(request:HttpRequest) -> HttpResponse:
-    usuarios = Usuario.objects.filter(is_staff=False)
-    lista_usuarios = []
-    for usuario in usuarios:
-        usuario_pk = UsuarioEndereco.objects.filter(idcliente=usuario.pk,primario=True).values_list('idendereco', flat=True)
-        if len(usuario_pk) > 0:
-            tel = usuario.telefone
-            e = Endereco.objects.get(id=usuario_pk[0])
-            u = {
-            'pk': usuario.pk,
-            'nome': usuario.nome,
-            'sobrenome': usuario.sobrenome,
-            'cpf': usuario.cpf,
-            'telefone': f'({tel[0:2]}) {tel[2:7]}-{tel[7:]}',
-            'rua': e.logradouro,
-            'numero': e.numero,
-            }
-            lista_usuarios.append(u)
+    lista_usuarios = load_cliente_data(None)
     return render(request, 'painel.html', \
         context={'view': 'clientes.html', 'title': 'Clientes', \
-            'usuarios': lista_usuarios, 'auxiliar': 'blank.html'})
+            'usuarios': lista_usuarios, 'auxiliar': 'blank.html', \
+                'sidebar': 'sidebar.html', 'is_modal': '0'})
 
-def clientes_busca(request):
+def clientes_busca(request:HttpRequest) -> HttpResponse:
     pesquisa = request.GET['pesquisa']
-    if pesquisa == '':
-        clientes_filtrados = Usuario.objects.filter(is_staff=False)
-    else:
-        clientes_filtrados = Usuario.objects.filter(Q(nome__icontains=pesquisa) | Q(sobrenome__icontains=pesquisa) | Q(telefone__icontains=pesquisa) & Q(is_staff=False))
-    resposta_clientes = []
-    for cliente in clientes_filtrados:
-        endereco_cliente_pk = UsuarioEndereco.objects.filter(idcliente=cliente.pk,primario=True).values_list('idendereco', flat=True)
-        if len(endereco_cliente_pk) > 0:
-            tel = cliente.telefone
-            endereco = Endereco.objects.get(id=endereco_cliente_pk[0])
-            obj_cliente = {
-            'pk': cliente.pk,
-            'nome': cliente.nome,
-            'sobrenome': cliente.sobrenome,
-            'telefone': f'({tel[0:2]}) {tel[2:7]}-{tel[7:]}',
-            'rua': endereco.logradouro,
-            'numero': endereco.numero,
-            }
-            resposta_clientes.append(obj_cliente)
+    resposta_clientes = load_cliente_data(pesquisa)
     return JsonResponse({"clientes": resposta_clientes}, safe=False)
 
 def clientes_delete(request:HttpRequest, pk):
@@ -85,11 +60,13 @@ def clientes_pagina_editar(request, pk):
         "enderecos": enderecos_lista
     }
     return render(request, 'painel.html', context={'view': 'clientes_editar.html', \
-        'title': 'Editar cliente', 'dados': retorno, 'auxiliar': 'blank.html'})
+        'title': 'Editar cliente', 'dados': retorno, 'auxiliar': 'blank.html', \
+            'sidebar': 'sidebar.html'})
 
 def clientes_cadastro(request:HttpRequest) -> HttpResponse:
     return render(request, 'painel.html', context={'view': 'clientes_cadastro.html', \
-        'title': 'Cadastrar cliente', 'auxiliar': 'blank.html'})
+        'title': 'Cadastrar cliente', 'auxiliar': 'blank.html', \
+            'sidebar': 'sidebar.html'})
 
 def carrinho_editar(request:HttpRequest, id_produto: int, quantidade: float, id_item: int) -> HttpResponse:
     id_produto = int(id_produto)
@@ -207,6 +184,9 @@ def clientes_editar(request:HttpRequest) -> HttpResponse:
     return JsonResponse(resposta)
 
 def cardapio(request:HttpRequest) -> HttpResponse:
+    return cardapio_cliente(request, '')
+
+def cardapio_cliente(request:HttpRequest, cliente_selecionado: str) -> HttpResponse:
     tipos_produtos = ProdutoTipo.objects.all()
     tipo_selecionado = request.GET.get("tipo")
     tipo_ativo: ProdutoTipo
@@ -216,7 +196,8 @@ def cardapio(request:HttpRequest) -> HttpResponse:
         tipo_ativo = ProdutoTipo.objects.get(id=tipo_selecionado)
     return render(request, 'painel.html', context={'view': 'cardapio.html', \
         'title': 'Cardápio', 'tipos': tipos_produtos, \
-            "tipo_ativo": tipo_ativo, 'auxiliar': 'cardapio_busca.html'})
+            "tipo_ativo": tipo_ativo, 'auxiliar': 'cardapio_busca.html', \
+                'sidebar': 'sidebar.html', 'cliente_selecionado': cliente_selecionado})
 
 def cardapio_busca(request:HttpRequest) -> HttpResponse:
     tipo_desejado = request.GET.get("tipo")
@@ -229,4 +210,5 @@ def cardapio_busca(request:HttpRequest) -> HttpResponse:
 
 def pedidos(request:HttpRequest) -> HttpResponse:
     return render(request, 'painel.html', context={ \
-        'view': 'pedidos.html', 'title': 'Pedidos', 'auxiliar': 'blank.html'})
+        'view': 'pedidos.html', 'title': 'Pedidos', 'auxiliar': 'blank.html', \
+            'sidebar': 'sidebar.html'})

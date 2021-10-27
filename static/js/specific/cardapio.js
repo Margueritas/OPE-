@@ -6,6 +6,24 @@ function abreModalQuantidade(idItem, nomeItem) {
     $('#nome-produto-quantidade').html(nomeItem);
 }
 
+function adicionaNoCarrinho(idProduto, quantidade) {
+  carregaCarrinho(
+    $.ajax({
+        url: '/carrinho/editar/-1/' + idProduto + '/' + quantidade,
+        method: 'GET'
+    })
+  );
+}
+
+function removeDoCarrinho(idItem) {
+  carregaCarrinho(
+    $.ajax({
+        url: '/carrinho/deletar/' + idItem,
+        method: 'GET'
+    })
+  );
+}
+
 function alteraNoCarrinho(idItem, quantidade) {
     if(quantidade < 0.01) {
         carregaCarrinho(
@@ -27,8 +45,12 @@ function alteraNoCarrinho(idItem, quantidade) {
 function carregaCarrinho(jQueryAjaxObj) {
     jQueryAjaxObj.done(function(response) {
         carrinho = JSON.parse(response);
-        // alert('protótipo: seu carrinho consiste de (JSON) -> '+ JSON.stringify(carrinho));
+        alert('protótipo: seu carrinho consiste de (JSON) -> '+ JSON.stringify(carrinho));
     });
+}
+
+function selectCustomer(pk) {
+  alert(pk);
 }
 
 $(document).ready(function() {
@@ -81,7 +103,7 @@ $(document).ready(function() {
         campos.nome,
         campos.descricao,
         campos.preco,
-        campos.id,
+        item.pk,
         campos.idtipo,
         campos.preco_meio,
       );

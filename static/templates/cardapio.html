@@ -1,7 +1,7 @@
 {% block content %}
 {% load static %}
 <div style="position: absolute;top: 13px;right: 25px;">
-  <a href="#" onclick="
+  <a href="javascript://" onclick="
     console.log($('#medida').height()+'px');
     if($('#carrinho').css('height')==='0px'){
       $('#carrinho').css({'visibility':'visible','opacity':'100','border':'1px solid #34675154','height':$('#medida').height()+'px','transition':'opacity 250ms, height 150ms ease-out'});
@@ -30,6 +30,8 @@
 </div>
 <script>
     var tipoAtivo = '{{ tipo_ativo.id }}';
+    var clienteSelecionado = '{{ cliente_selecionado }}';
+    alert('protótipo: o cliente selecionado é ' + clienteSelecionado)
     $(document).ready(function() {
       $.ajax({
         url: "{% static 'html/cardapio_item.html' %}",
