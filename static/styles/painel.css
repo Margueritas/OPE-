@@ -340,9 +340,20 @@ li.tipositem a.selecionado {
 
 .btn-pizza {
     background-color: #C84B31 !important;
+    border: none;
     color: white !important;
     font-weight: bold !important;
     width: 80px;
+    border-radius: 5px !important;
+}
+
+@keyframes dance {
+    0% { border: 2px solid #ffa56a; }
+    100% { border: none }
+}
+
+.btn-pizza:active{
+    animation: dance 0.4s ease-in-out;
 }
 
 .card-image{

@@ -118,6 +118,7 @@ class Produto(models.Model):
     preco = models.FloatField(blank=True, null=True)
     imagem = models.CharField(max_length=255, blank=True, null=True)
     idtipo = models.ForeignKey(ProdutoTipo, models.DO_NOTHING, db_column='idtipo')
+    preco_meio = models.FloatField(blank=True, null=True)
 
     class Meta:
         managed = False

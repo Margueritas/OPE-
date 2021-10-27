@@ -83,6 +83,7 @@ $(document).ready(function() {
         campos.preco,
         campos.id,
         campos.idtipo,
+        campos.preco_meio,
       );
       
     }
