@@ -1,5 +1,10 @@
 {% block content %}
 {% load static %}
+<style>
+  .modal-dialog {
+    max-width: 630px; /* New width for default modal */
+  }
+</style>
 <div style="position: absolute;top: 13px;right: 25px;">
   <a href="javascript://" onclick="
     console.log($('#medida').height()+'px');
