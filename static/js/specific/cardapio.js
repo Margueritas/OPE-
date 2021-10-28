@@ -1,12 +1,16 @@
 var carrinho = {};
 var itemSelecionado = '';
+var clienteSelecionado = null;
+var tipoAtivo = null;
+var modalResolve = null;
 
-function abreModalQuantidade(idItem, nomeItem) {
-    itemSelecionado = idItem;
-    $('#nome-produto-quantidade').html(nomeItem);
-}
-
-function adicionaNoCarrinho(idProduto, quantidade) {
+async function adicionaNoCarrinho(idProduto, quantidade) {
+  if(clienteSelecionado == null || clienteSelecionado == '') {
+    $("#modalSelecionarCliente").modal("show");
+    clienteSelecionado = await new Promise(function(res, rej){
+      modalResolve = res;
+    });
+  }
   carregaCarrinho(
     $.ajax({
         url: '/carrinho/editar/-1/' + idProduto + '/' + quantidade,
@@ -50,7 +54,13 @@ function carregaCarrinho(jQueryAjaxObj) {
 }
 
 function selectCustomer(pk) {
-  alert(pk);
+  if(modalResolve != null) {
+    modalResolve(pk);
+    $("#modalSelecionarCliente").modal("hide");
+  } else {
+    clienteSelecionado = pk;
+  }
+  alert('cliente selecionado é o ' + pk);
 }
 
 $(document).ready(function() {
