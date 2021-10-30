@@ -51,6 +51,26 @@ function selectCustomer(pk) {
   alert('cliente selecionado é o ' + pk);
 }
 
+function toggleCarrinho() {
+  
+  if($('#carrinho').css('height')==='0px'){
+    $('#carrinho').css({'visibility':'visible','opacity':'100','border':'1px solid #34675154','height':$('#medida').height()+'px','transition':'opacity 250ms, height 150ms ease-out'});
+  }
+  else {
+    $('#carrinho').css({'opacity':'0','border':'1px solid #white','height':'0','transition':'opacity 250ms, height 150ms ease-in, border-color 250ms ease'});
+    setTimeout(function(){
+      $('#carrinho').css({'border':'0','visibility':'collapse'});
+    }, 270);
+  };
+  $('#setacarrinho').toggleClass('d-none');
+  if($('#botao-carrinho').css('background-color').toString()=='rgb(52, 103, 81)') {
+    $('#botao-carrinho').css('background', '#ffffff').css('color', '#346751').css('transition','background-color 250ms ease-in');
+  }
+  else {
+    $('#botao-carrinho').css('background', '#346751').css('color', '#ffffff');
+  };
+}
+
 $(document).ready(function() {
     carregaCarrinho(
         $.ajax({
