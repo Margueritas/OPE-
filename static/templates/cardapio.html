@@ -10,11 +10,111 @@
     <span id="botao-carrinho" class="material-icons" style="font-size: 35px; color: white; background: #346751;padding:12px;border-radius: 50%;">shopping_cart</span>
   </a>
 </div>
-<div id="setacarrinho" class="d-none" style="position: absolute; top: 72px; right: 40px; width: 0; height: 0; border-left: 15px solid transparent;border-right: 15px solid transparent;border-bottom: 15px solid #34675154;"></div>
-<div id="carrinho" style="visibility:collapse; opacity: 0; height: 0; transition: height 300ms ease-out; width: 350px; position: absolute; top: 87px; right: 25px; background-color: white; border: 0px solid #34675154;">
-<div id='medida'>
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<div id="setacarrinho" class="d-none" style="position: absolute; top: 72px; right: 40px; width: 0; height: 0; border-left: 15px solid transparent;border-right: 15px solid transparent;border-bottom: 15px solid #34675154;">
 </div>
+
+<div id="carrinho" style="visibility:collapse; opacity: 0; height: 0; transition: height 300ms ease-out; width: 350px; position: absolute; top: 87px; right: 25px; background-color: white; border: 0px solid #34675154;">
+  
+  <div id='medida' style="display: table;visibility: visible; margin-bottom:20px;">
+    
+    <h3 class="carrinho-titulo" style="font-size: 20px;text-align: center;margin-top: 15px;margin-bottom: 15px;">Confira se o pedido está correto</h3>
+    
+    <div class="carrinho-dados-cliente" style="display: grid;margin-left: 20px;border-bottom: 1px solid #ddd;margin-right: 20px;padding-left: 15px;padding-bottom: 10px;margin-bottom:20px;">
+      <span>Marcelo Arruda</span>
+      <span>Rua da Mooca, 123</span>
+      <span>(11) 99858-5565</span>
+    </div>
+
+
+    <div class="carrinho-itens">
+      <div id="item1" class="item" style="margin-left:20px; margin-right:20px; margin-bottom:30px; display: grid; grid-template-columns: 22px auto 18px; box-shadow: 7px 7px 7px rgba(68, 67, 67, 0.08);padding: 10px;">
+        <span style="font-weight: bold; color: #346751">01</span>
+        <div style="display:flex;flex-wrap: wrap;">
+          <div style="width: 100%;">
+            <span class="material-icons" style="display:inline; color:#346751; cursor: pointer;font-size: 18px;vertical-align: text-bottom;">close</span>
+            <span class="meia" style="vertical-align: top;">
+              <span style="margin-left: 2px;font-size:13px; font-weight:bold;padding: 2px 5px;color:white;border-radius: 20%;background-color: #C84B31;">1/2</span> Pizza de Frango com Catupiry
+            </span>
+          </div>
+          <div style="width: 100%;">
+            <span class="material-icons" style="display:inline; color:#346751; cursor: pointer;font-size: 18px;vertical-align: text-bottom;">close</span>
+            <span class="meia" style="vertical-align: top;">
+              <span style="margin-left: 2px;font-size:13px; font-weight:bold;padding: 2px 5px;color:white;border-radius: 20%;background-color: #C84B31;">1/2</span> Pizza de Quatro Queijos
+            </span>
+          </div>
+        </div>
+        <span class="material-icons" style="justify-self: flex-start; color:#346751; cursor: pointer;">close</span>
+        <span style="grid-column-start: 1; grid-column-end:4; font-weight: bold;justify-self: flex-end;">R$ 35,00</span>
+      </div>
+
+
+      <div id="item2" class="item" style="margin-left:20px; margin-right:20px; margin-bottom:30px; display: grid; grid-template-columns: 22px auto 18px; box-shadow: 7px 7px 7px rgba(68, 67, 67, 0.08);padding: 10px;">
+        <span style="font-weight: bold; color: #346751">02</span>
+        <div style="display:flex;flex-wrap: wrap;">
+          <div style="width: 100%;">
+            <span class="material-icons" style="display:inline; color:#346751; cursor: pointer;font-size: 18px;vertical-align: text-bottom;">close</span>
+            <span class="meia" style="vertical-align: top;">
+              <span style="margin-left: 2px;font-size:13px; font-weight:bold;padding: 2px 5px;color:white;border-radius: 20%;background-color: #C84B31;">1/2</span> Pizza de Frango com Catupiry
+            </span>
+          </div>
+          <div style="width: 100%;">
+            <span class="material-icons" style="display:inline; color:#346751; cursor: pointer;font-size: 18px;vertical-align: text-bottom;">close</span>
+            <span class="meia" style="vertical-align: top;">
+              <span style="margin-left: 2px;font-size:13px; font-weight:bold;padding: 2px 5px;color:white;border-radius: 20%;background-color: #C84B31;">1/2</span> Pizza de Quatro Queijos
+            </span>
+          </div>
+        </div>
+        <span class="material-icons" style="justify-self: flex-start; color:#346751; cursor: pointer;">close</span>
+        <span style="grid-column-start: 1; grid-column-end:4; font-weight: bold;justify-self: flex-end;">R$ 35,00</span>
+      </div>
+
+
+      <div id="item3" class="item" style="margin-left:20px; margin-right:20px; margin-bottom:30px; display: grid; grid-template-columns: 22px auto 18px; box-shadow: 7px 7px 7px rgba(68, 67, 67, 0.08);padding: 10px;">
+        <span style="font-weight: bold; color: #346751">03</span>
+        <div style="display:flex;flex-wrap: wrap;">
+          <div class="inteira" style="width: 100%;">
+            <span style="vertical-align: top;">Pizza de Frango com Catupiry</span>
+          </div>
+        </div>
+        <span class="material-icons" style="justify-self: flex-start; color:#346751; cursor: pointer;">close</span>
+        <span style="grid-column-start: 1; grid-column-end:4; font-weight: bold;justify-self: flex-end;">R$ 35,00</span>
+      </div>
+
+
+      <div id="item4" class="item" style="margin-left:20px; margin-right:20px; margin-bottom:30px; display: grid; grid-template-columns: 22px auto 18px; box-shadow: 7px 7px 7px rgba(68, 67, 67, 0.08);padding: 10px;">
+        <span style="font-weight: bold; color: #346751">04</span>
+        <div style="display:flex;flex-wrap: wrap;">
+          <div class="inteira" style="width: 100%;">
+            <span style="vertical-align: top;">Coca Cola</span>
+          </div>
+        </div>
+        <span class="material-icons" style="justify-self: flex-start; color:#346751; cursor: pointer;">close</span>
+        <span style="grid-column-start: 1; grid-column-end:4; font-weight: bold;justify-self: flex-end;">R$ 15,00</span>
+      </div>
+
+
+      <div id="total" class="total" style="justify-content: flex-end;display: flex;border-top: 1px solid #ddd; margin: 0 20px; padding: 10px 0 0 0;">
+        <span>total:</span>
+        <span style="margin-left:5px; font-weight: bold;">R$ 120,00</span>
+      </div>
+
+    </div>
+    <div id="carrinho-botao-confirmar" style="justify-content: center;display: flex; padding: 20px 0;">
+      <button id="confirmar-pedido" style="margin-left: 20px;
+      background: #C84B31;
+      border-radius: 5px;
+      color: white;
+      font-weight: bold;
+      font-size: medium;
+      border: none;
+      width: 228px;
+      height: 50px;
+      font-family: 'Quicksand', sans-serif;
+      cursor: pointer;
+      display: inline;
+      vertical-align: middle;"><span class="material-icons">check</span>confirmar pedido</button>
+    </div>
+  </div>
 </div>
 <script>
     $(document).ready(function() {
