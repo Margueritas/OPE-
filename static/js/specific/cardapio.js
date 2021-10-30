@@ -2,15 +2,8 @@ var carrinho = {};
 var itemSelecionado = '';
 var clienteSelecionado = null;
 var tipoAtivo = null;
-var modalResolve = null;
 
-async function adicionaNoCarrinho(idProduto, quantidade) {
-  if(clienteSelecionado == null || clienteSelecionado == '') {
-    $("#modalSelecionarCliente").modal("show");
-    clienteSelecionado = await new Promise(function(res, rej){
-      modalResolve = res;
-    });
-  }
+function adicionaNoCarrinho(idProduto, quantidade) {
   carregaCarrinho(
     $.ajax({
         url: '/carrinho/editar/-1/' + idProduto + '/' + quantidade,
@@ -54,12 +47,7 @@ function carregaCarrinho(jQueryAjaxObj) {
 }
 
 function selectCustomer(pk) {
-  if(modalResolve != null) {
-    modalResolve(pk);
-    $("#modalSelecionarCliente").modal("hide");
-  } else {
-    clienteSelecionado = pk;
-  }
+  clienteSelecionado = pk;
   alert('cliente selecionado é o ' + pk);
 }
 
