@@ -11,10 +11,45 @@
     border: 0px solid #34675154;
 }
 
+#total {
+    justify-content: flex-end;
+    display: flex;
+    border-top: 1px solid #ddd;
+    margin: 0 20px;
+    padding: 10px 0 0 0;
+}
+
+#total-valor {
+    margin-left:5px;
+    font-weight: bold;
+}
+
 #medida {
     display: table;
     visibility: visible;
     margin-bottom:20px;
+}
+
+#confirmar-pedido {
+    margin-left: 20px;
+    background: #C84B31;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    font-size: medium;
+    border: none;
+    width: 228px;
+    height: 50px;
+    font-family: 'Quicksand', sans-serif;
+    cursor: pointer;
+    display: inline;
+    vertical-align: middle;
+}
+
+#carrinho-botao-confirmar {
+    justify-content: center;
+    display: flex;
+    padding: 20px 0;
 }
 
 .modal-dialog {
@@ -66,7 +101,7 @@
     cursor: pointer;
 }
 
-.meia {
+.meia, .txt-produto-inteira {
     vertical-align: top;
 }
 

@@ -13,7 +13,7 @@
 
 <div id="carrinho">
   
-  <div id='medida'>
+  <div id="medida">
     
     <h3 class="carrinho-titulo">Confira se o pedido está correto</h3>
     
@@ -46,50 +46,25 @@
       </div>
 
 
-      <div id="item3" class="item" style="margin-left:20px; margin-right:20px; margin-bottom:30px; display: grid; grid-template-columns: 22px auto 18px; box-shadow: 7px 7px 7px rgba(68, 67, 67, 0.08);padding: 10px;">
-        <span style="font-weight: bold; color: #346751">03</span>
-        <div style="display:flex;flex-wrap: wrap;">
-          <div class="inteira" style="width: 100%;">
-            <span style="vertical-align: top;">Pizza de Frango com Catupiry</span>
+      <div id="item3" class="item">
+        <span class="item-numero">02</span>
+        <div class="item-produtos">
+          <div class="item-produto">
+            <span class="txt-produto-inteira">Pizza de Frango com Catupiry</span>
           </div>
         </div>
-        <span class="material-icons" style="justify-self: flex-start; color:#346751; cursor: pointer;">close</span>
-        <span style="grid-column-start: 1; grid-column-end:4; font-weight: bold;justify-self: flex-end;">R$ 35,00</span>
+        <span class="material-icons btn-delete-item">close</span>
+        <span class="item-preco">R$ 35,00</span>
       </div>
 
-
-      <div id="item4" class="item" style="margin-left:20px; margin-right:20px; margin-bottom:30px; display: grid; grid-template-columns: 22px auto 18px; box-shadow: 7px 7px 7px rgba(68, 67, 67, 0.08);padding: 10px;">
-        <span style="font-weight: bold; color: #346751">04</span>
-        <div style="display:flex;flex-wrap: wrap;">
-          <div class="inteira" style="width: 100%;">
-            <span style="vertical-align: top;">Coca Cola</span>
-          </div>
-        </div>
-        <span class="material-icons" style="justify-self: flex-start; color:#346751; cursor: pointer;">close</span>
-        <span style="grid-column-start: 1; grid-column-end:4; font-weight: bold;justify-self: flex-end;">R$ 15,00</span>
-      </div>
-
-
-      <div id="total" class="total" style="justify-content: flex-end;display: flex;border-top: 1px solid #ddd; margin: 0 20px; padding: 10px 0 0 0;">
+      <div id="total">
         <span>total:</span>
-        <span style="margin-left:5px; font-weight: bold;">R$ 120,00</span>
+        <span id="total-valor">R$ 70,00</span>
       </div>
 
     </div>
-    <div id="carrinho-botao-confirmar" style="justify-content: center;display: flex; padding: 20px 0;">
-      <button id="confirmar-pedido" style="margin-left: 20px;
-      background: #C84B31;
-      border-radius: 5px;
-      color: white;
-      font-weight: bold;
-      font-size: medium;
-      border: none;
-      width: 228px;
-      height: 50px;
-      font-family: 'Quicksand', sans-serif;
-      cursor: pointer;
-      display: inline;
-      vertical-align: middle;"><span class="material-icons">check</span>confirmar pedido</button>
+    <div id="carrinho-botao-confirmar">
+      <button id="confirmar-pedido"><span class="material-icons">check</span>confirmar pedido</button>
     </div>
   </div>
 </div>
