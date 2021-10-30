@@ -3,6 +3,7 @@ var itemSelecionado = '';
 var clienteSelecionado = null;
 var tipoAtivo = null;
 var cartStatus = false;
+var produtos = {};
 
 function adicionaNoCarrinho(idProduto, quantidade) {
   carregaCarrinho(
@@ -40,10 +41,35 @@ function alteraNoCarrinho(idItem, quantidade) {
     }
 }
 
+function carregaProduto(pk) {
+  var resolve = null;
+  var promise = new Promise(function(res, rej) {
+    resolve = res;
+  });
+  $.ajax({
+    url: '/produto?id=' + pk,
+    method: 'GET'
+  }).done(function(response) {
+    resolve(JSON.parse(response));
+  });
+  return promise;
+}
+
 function carregaCarrinho(jQueryAjaxObj) {
-    jQueryAjaxObj.done(function(response) {
-        carrinho = JSON.parse(response);
-        alert('protótipo: seu carrinho consiste de (JSON) -> '+ JSON.stringify(carrinho));
+    jQueryAjaxObj.done(async function(response) {
+      var item = null;
+      carrinho = JSON.parse(response);
+      for(item of carrinho) {
+        var produtoNoItem = null;
+        for(produtoNoItem of item.produtos) {
+          if(produtos[produtoNoItem.id_produto] == null) {
+            produtos[produtoNoItem.id_produto] = (await carregaProduto(produtoNoItem.id_produto))[0];
+          }
+        }
+      }
+      alert(JSON.stringify(produtos));
+      alert(JSON.stringify(carrinho));
+      
     });
 }
 

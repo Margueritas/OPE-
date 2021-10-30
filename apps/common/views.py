@@ -1,8 +1,9 @@
 from django.http import JsonResponse
 from django.shortcuts import render,redirect
 from apps.common.models import Endereco, Usuario, ProdutoTipo, Produto, UsuarioEndereco
-from apps.common.carrinho import get_carrinho_dict, save_carrinho_dict
-from apps.common.clientes import load_cliente_data
+from apps.common.business.rules.carrinho import get_carrinho_dict, save_carrinho_dict
+from apps.common.business.rules.clientes import load_cliente_data
+from apps.common.business.rules.produtos import buscar_produtos
 from django.http import HttpRequest, HttpResponse
 from django.core import serializers
 import json
@@ -202,10 +203,12 @@ def cardapio_cliente(request:HttpRequest, cliente_selecionado: str) -> HttpRespo
 def cardapio_busca(request:HttpRequest) -> HttpResponse:
     tipo_desejado = request.GET.get("tipo")
     pesquisa = request.GET.get('pesquisa')
-    if pesquisa is None:
-        pesquisa = ''
-    tipo = ProdutoTipo.objects.get(id=tipo_desejado)
-    produtos_buscados = Produto.objects.filter(idtipo=tipo, nome__icontains=pesquisa)
+    produtos_buscados = buscar_produtos(tipo_desejado, pesquisa, -1)
+    return HttpResponse(serializers.serialize('json', produtos_buscados, fields=('nome', 'descricao', 'preco', 'imagem', 'idtipo', 'preco_meio')))
+
+def buscar_produto(request:HttpRequest) -> HttpResponse:
+    id = request.GET.get("id")
+    produtos_buscados = buscar_produtos(None, None, int(id))
     return HttpResponse(serializers.serialize('json', produtos_buscados, fields=('nome', 'descricao', 'preco', 'imagem', 'idtipo', 'preco_meio')))
 
 def pedidos(request:HttpRequest) -> HttpResponse:
