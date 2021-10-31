@@ -5,6 +5,10 @@ var tipoAtivo = null;
 var cartStatus = false;
 var produtos = {};
 
+var ITEM_CARRINHO_PRODUTO_TEMPLATE = '';
+var ITEM_CARRINHO_TEMPLATE = '';
+var VALOR_TOTAL_TEMPLATE = '';
+
 function adicionaNoCarrinho(idProduto, quantidade) {
   carregaCarrinho(
     $.ajax({
@@ -41,16 +45,25 @@ function alteraNoCarrinho(idItem, quantidade) {
     }
 }
 
-function carregaProduto(pk) {
+function delay(time) {
+  var resolve = null;
+  var promise = new Promise(function(res, rej) {
+    resolve = res;
+  });
+  setTimeout(function() {resolve('');}, time);
+  return promise;
+}
+
+function ajaxPromise(url) {
   var resolve = null;
   var promise = new Promise(function(res, rej) {
     resolve = res;
   });
   $.ajax({
-    url: '/produto?id=' + pk,
+    url: url,
     method: 'GET'
   }).done(function(response) {
-    resolve(JSON.parse(response));
+    resolve(response);
   });
   return promise;
 }
@@ -63,14 +76,63 @@ function carregaCarrinho(jQueryAjaxObj) {
         var produtoNoItem = null;
         for(produtoNoItem of item.produtos) {
           if(produtos[produtoNoItem.id_produto] == null) {
-            produtos[produtoNoItem.id_produto] = (await carregaProduto(produtoNoItem.id_produto))[0];
+            produtos[produtoNoItem.id_produto] = JSON.parse(await ajaxPromise('/produto?id=' + produtoNoItem.id_produto))[0];
           }
         }
       }
-      alert(JSON.stringify(produtos));
-      alert(JSON.stringify(carrinho));
-      
+      var htmlTotal = '';
+      var valorTotalCarrinho = 0;
+      for(item of carrinho) {
+        var numeroItem = '' + (item.id_item + 1);
+        var produtosHtml = '';
+        if(numeroItem.length < 2) {
+          numeroItem = '0' + numeroItem;
+        }
+        var precoTotal = 0;
+        for(produtoItem of item.produtos) {
+          var produto = produtos['' + produtoItem.id_produto];
+          var quantidade = '';
+          if(produtoItem.quantidade < 1) {
+            quantidade = '1/2';
+            precoTotal += produto.fields.preco_meio;
+          } else {
+            precoTotal += produto.fields.preco;
+          }
+          produtosHtml += ITEM_CARRINHO_PRODUTO_TEMPLATE.format(
+            quantidade,
+            produto.fields.nome
+          );
+        }
+        valorTotalCarrinho += precoTotal;
+        htmlTotal += ITEM_CARRINHO_TEMPLATE.format(
+          numeroItem,
+          produtosHtml,
+          asMonetary(precoTotal)
+        );
+      }
+      htmlTotal += VALOR_TOTAL_TEMPLATE.format(
+        asMonetary(valorTotalCarrinho)
+      );
+      $('#carrinho-itens').html(htmlTotal);
+      if(!cartStatus) {
+        await toggleCarrinho();
+      } else {
+        await toggleCarrinho();
+        await delay(500);
+        await toggleCarrinho();
+      }
     });
+}
+
+function asMonetary(value) {
+  var precoSplit = ('' + value).split('.');
+  if(precoSplit.length < 2) {
+    precoSplit.push('0');
+  }
+  if(precoSplit[1].length < 2) {
+    precoSplit[1] = precoSplit[1] + '0';
+  }
+  return precoSplit.join(',');
 }
 
 function selectCustomer(pk) {
@@ -79,16 +141,22 @@ function selectCustomer(pk) {
 }
 
 function toggleCarrinho() {
+  var resolve = null;
+  var promise = new Promise(function(res, rej) {
+    resolve = res;
+  });
   if($('#carrinho').css('height')==='0px'){
     $('#carrinho').css({'visibility':'visible','opacity':'100',
       'border':'1px solid #34675154','height':$('#medida').height()+'px',
       'transition':'opacity 250ms, height 150ms ease-out'});
       cartStatus = true;
+      resolve('');
   } else {
     $('#carrinho').css({'opacity':'0','border':'1px solid #white',
       'height':'0','transition':'opacity 250ms, height 150ms ease-in, border-color 250ms ease'});
     setTimeout(function(){
       $('#carrinho').css({'border':'0','visibility':'collapse'});
+      resolve('');
     }, 270);
     cartStatus = false;
   }
@@ -111,8 +179,6 @@ $(document).ready(function() {
         })
     );
 });
-
-
 
   var CLASSE_CSS_SELECIONADO = 'selecionado';
   var ITEM_TEMPLATE = '';
@@ -178,8 +244,7 @@ $(document).ready(function() {
         $(".btn-pizza-int").addClass('d-none');
         $(".pizza-mei").addClass('d-none');
         $(".btn-bebida").removeClass('d-none');
-      }
-      else{
+      } else {
         $(".btn-pizza-mei").removeClass('d-none');
         $(".btn-pizza-int").removeClass('d-none');
         $(".pizza-mei").removeClass('d-none');

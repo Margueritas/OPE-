@@ -24,7 +24,7 @@
     </div>
 
 
-    <div class="carrinho-itens">
+    <div id="carrinho-itens">
       <div id="item1" class="item">
         <span class="item-numero">01</span>
         <div class="item-produtos">
@@ -68,25 +68,23 @@
     </div>
   </div>
 </div>
+<script type="text/javascript" src="{% static 'js/specific/cardapio.js' %}"></script>
 <script>
-    $(document).ready(function() {
+    $(document).ready(async function() {
       var cliente = '{{ cliente_selecionado }}';
       if(cliente != null && cliente != '') {
         selectCustomer(cliente);
       }
-      $.ajax({
-        url: "{% static 'html/cardapio_item.html' %}",
-        method: 'GET'
-      }).done(function(response) {
-        ITEM_TEMPLATE = response;
-        containerItens = $('#cardapio-items');
-        CARREGANDO = containerItens.html();
-        trocaTipo('{{ tipo_ativo.id }}');
-      });
+      ITEM_TEMPLATE = await ajaxPromise("{% static 'html/cardapio/item.html' %}");
+      ITEM_CARRINHO_TEMPLATE = await ajaxPromise("{% static 'html/cardapio/item_carrinho.html' %}");
+      ITEM_CARRINHO_PRODUTO_TEMPLATE = await ajaxPromise("{% static 'html/cardapio/item_carrinho_produto.html' %}");
+      VALOR_TOTAL_TEMPLATE = await ajaxPromise("{% static 'html/cardapio/valor_total.html' %}");
+      containerItens = $('#cardapio-items');
+      CARREGANDO = containerItens.html();
+      trocaTipo('{{ tipo_ativo.id }}');
     });
   
 </script>
-<script type="text/javascript" src="{% static 'js/specific/cardapio.js' %}"></script>
 <div id="texto">
     <p style="margin-top: 20px; margin-bottom: 20px; line-height: 50px; vertical-align: middle;">Selecione os itens do pedido</p>
 </div>
