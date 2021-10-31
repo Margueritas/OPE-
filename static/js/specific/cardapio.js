@@ -82,7 +82,9 @@ function carregaCarrinho(jQueryAjaxObj) {
       }
       var htmlTotal = '';
       var valorTotalCarrinho = 0;
+      var hasItens = false;
       for(item of carrinho) {
+        hasItens = true;
         var numeroItem = '' + (item.id_item + 1);
         var produtosHtml = '';
         if(numeroItem.length < 2) {
@@ -110,16 +112,29 @@ function carregaCarrinho(jQueryAjaxObj) {
           asMonetary(precoTotal)
         );
       }
+      if(!hasItens) {
+        htmlTotal += 'Nenhum item no carrinho.';
+      }
       htmlTotal += VALOR_TOTAL_TEMPLATE.format(
         asMonetary(valorTotalCarrinho)
       );
       $('#carrinho-itens').html(htmlTotal);
-      if(!cartStatus) {
-        await toggleCarrinho();
-      } else {
-        await toggleCarrinho();
-        await delay(500);
-        await toggleCarrinho();
+      if(hasItens) {
+        if(!cartStatus) {
+          await toggleCarrinho();
+        } else {
+          await toggleCarrinho();
+          await delay(500);
+          await toggleCarrinho();
+        }
+      }
+      var labels = $('.label-meia').filter(function(ignored, e) {
+        return e.innerHTML == '';
+      });
+      var label = null;
+      for(label of labels) {
+        $(label.parentNode.parentNode).find('.material-icons').remove();
+        $(label).remove();
       }
     });
 }
@@ -170,15 +185,6 @@ function toggleCarrinho() {
     $('#botao-carrinho').css('background', '#346751').css('color', '#ffffff');
   };
 }
-
-$(document).ready(function() {
-    carregaCarrinho(
-        $.ajax({
-            url: '/carrinho/carregar',
-            method: 'GET'
-        })
-    );
-});
 
   var CLASSE_CSS_SELECIONADO = 'selecionado';
   var ITEM_TEMPLATE = '';

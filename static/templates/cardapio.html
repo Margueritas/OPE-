@@ -24,45 +24,7 @@
     </div>
 
 
-    <div id="carrinho-itens">
-      <div id="item1" class="item">
-        <span class="item-numero">01</span>
-        <div class="item-produtos">
-          <div class="item-produto">
-            <span class="material-icons btn-delete-produto">close</span>
-            <span class="meia">
-              <span class="label-meia">1/2</span> Pizza de Frango com Catupiry
-            </span>
-          </div>
-          <div class="item-produto">
-            <span class="material-icons btn-delete-produto">close</span>
-            <span class="meia">
-              <span class="label-meia">1/2</span> Pizza de Quatro Queijos
-            </span>
-          </div>
-        </div>
-        <span class="material-icons btn-delete-item">close</span>
-        <span class="item-preco">R$ 35,00</span>
-      </div>
-
-
-      <div id="item3" class="item">
-        <span class="item-numero">02</span>
-        <div class="item-produtos">
-          <div class="item-produto">
-            <span class="txt-produto-inteira">Pizza de Frango com Catupiry</span>
-          </div>
-        </div>
-        <span class="material-icons btn-delete-item">close</span>
-        <span class="item-preco">R$ 35,00</span>
-      </div>
-
-      <div id="total">
-        <span>total:</span>
-        <span id="total-valor">R$ 70,00</span>
-      </div>
-
-    </div>
+    <div id="carrinho-itens">Carregando...</div>
     <div id="carrinho-botao-confirmar">
       <button id="confirmar-pedido"><span class="material-icons">check</span>confirmar pedido</button>
     </div>
@@ -82,6 +44,12 @@
       containerItens = $('#cardapio-items');
       CARREGANDO = containerItens.html();
       trocaTipo('{{ tipo_ativo.id }}');
+      carregaCarrinho(
+        $.ajax({
+            url: '/carrinho/carregar',
+            method: 'GET'
+        })
+      );
     });
   
 </script>
