@@ -51,6 +51,14 @@ function removeProdutoDoItem(label, indexProduto) {
   );
 }
 
+function showCarregando() {
+  $('#modalCarregando').modal('show');
+}
+
+function hideCarregando() {
+  $('#modalCarregando').modal('hide');
+}
+
 function ajaxPromise(url) {
   var resolve = null;
   var promise = new Promise(function(res, rej) {
@@ -70,6 +78,7 @@ function confirmarPedido() {
 }
 
 function carregaCarrinho(jQueryAjaxObj) {
+    showCarregando();
     var valido = true;
     if(clienteSelecionado == null) {
       $('#virgula').html('Favor selecionar cliente');
@@ -163,6 +172,7 @@ function carregaCarrinho(jQueryAjaxObj) {
         $(label.parentNode.parentNode).find('.material-icons').remove();
         $(label).remove();
       }
+      hideCarregando();
     });
 }
 
