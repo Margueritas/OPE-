@@ -140,11 +140,6 @@ function carregaCarrinho(jQueryAjaxObj) {
         asMonetary(valorTotalCarrinho)
       );
       $('#carrinho-itens').html(htmlTotal);
-      if(!valido) {
-        $('#confirmar-pedido').attr('disabled', 'disabled');
-      } else {
-        $('#confirmar-pedido').removeAttr('disabled');
-      }
       if(hasItens) {
         if(!cartStatus) {
           await toggleCarrinho();
@@ -152,6 +147,13 @@ function carregaCarrinho(jQueryAjaxObj) {
           await toggleCarrinho();
           await toggleCarrinho();
         }
+      } else {
+        valido = false;
+      }
+      if(!valido) {
+        $('#confirmar-pedido').attr('disabled', 'disabled');
+      } else {
+        $('#confirmar-pedido').removeAttr('disabled');
       }
       var labels = $('.label-meia').filter(function(ignored, e) {
         return e.innerHTML == '';
@@ -188,6 +190,7 @@ function toggleCarrinho() {
     resolve = res;
   });
   if($('#carrinho').css('height')==='0px'){
+    $('#carrinho').css({'display': ''});
     $('#carrinho').css({'visibility':'visible','opacity':'100',
       'border':'1px solid #34675154','height':$('#medida').height()+'px',
       'transition':'opacity 250ms, height 150ms ease-out'});
@@ -195,9 +198,11 @@ function toggleCarrinho() {
       resolve('');
   } else {
     $('#carrinho').css({'opacity':'0','border':'1px solid #white',
-      'height':'0','transition':'opacity 250ms, height 150ms ease-in, border-color 250ms ease'});
+      'height':'0px','transition':'opacity 250ms, height 150ms ease-in, border-color 250ms ease'});
     setTimeout(function(){
-      $('#carrinho').css({'border':'0','visibility':'collapse'});
+      $('#carrinho').css({'border':'0','visibility':'collapse',
+      'display': 'none'
+      });
       resolve('');
     }, 270);
     cartStatus = false;
