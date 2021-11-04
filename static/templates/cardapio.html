@@ -18,15 +18,15 @@
     <h3 class="carrinho-titulo">Confira se o pedido está correto</h3>
     
     <div class="carrinho-dados-cliente">
-      <span>Marcelo Arruda</span>
-      <span>Rua da Mooca, 123</span>
-      <span>(11) 99858-5565</span>
+      <span><span id="nome"></span> <span id="sobrenome"></span></span>
+      <span><span id="rua"></span><span id="virgula"></span><span id="numero"></span></span>
+      <span id="telefone"></span>
     </div>
 
 
     <div id="carrinho-itens">Carregando...</div>
     <div id="carrinho-botao-confirmar">
-      <button id="confirmar-pedido"><span class="material-icons">check</span>confirmar pedido</button>
+      <button id="confirmar-pedido" onclick="confirmarPedido();"><span class="material-icons">check</span>confirmar pedido</button>
     </div>
   </div>
 </div>
@@ -35,7 +35,7 @@
     $(document).ready(async function() {
       var cliente = '{{ cliente_selecionado }}';
       if(cliente != null && cliente != '') {
-        selectCustomer(cliente);
+        await selectCustomer(cliente, false);
       }
       ITEM_TEMPLATE = await ajaxPromise("{% static 'html/cardapio/item.html' %}");
       ITEM_CARRINHO_TEMPLATE = await ajaxPromise("{% static 'html/cardapio/item_carrinho.html' %}");
@@ -44,12 +44,7 @@
       containerItens = $('#cardapio-items');
       CARREGANDO = containerItens.html();
       trocaTipo('{{ tipo_ativo.id }}');
-      carregaCarrinho(
-        $.ajax({
-            url: '/carrinho/carregar',
-            method: 'GET'
-        })
-      );
+      iniciaCarrinho();
     });
   
 </script>

@@ -1,13 +1,16 @@
 from apps.common.models import Endereco, Usuario, UsuarioEndereco
 from django.db.models import Q
 
-def load_cliente_data(pesquisa: str) -> list:
-    if pesquisa == '' or pesquisa is None:
-        usuarios = Usuario.objects.filter(is_staff=False)
+def load_cliente_data(pk: int, pesquisa: str) -> list:
+    if pk is None:
+        if pesquisa == '' or pesquisa is None:
+            usuarios = Usuario.objects.filter(is_staff=False)
+        else:
+            usuarios = Usuario.objects.filter(Q(nome__icontains=pesquisa) \
+                | Q(sobrenome__icontains=pesquisa) | \
+                    Q(telefone__icontains=pesquisa) & Q(is_staff=False))
     else:
-        usuarios = Usuario.objects.filter(Q(nome__icontains=pesquisa) \
-            | Q(sobrenome__icontains=pesquisa) | \
-                Q(telefone__icontains=pesquisa) & Q(is_staff=False))
+        usuarios = Usuario.objects.filter(pk=pk)
     lista_usuarios = []
     for usuario in usuarios:
         usuario_pk = UsuarioEndereco.objects.filter(idcliente=usuario.pk,primario=True).values_list('idendereco', flat=True)

@@ -9,6 +9,15 @@ var ITEM_CARRINHO_PRODUTO_TEMPLATE = '';
 var ITEM_CARRINHO_TEMPLATE = '';
 var VALOR_TOTAL_TEMPLATE = '';
 
+function iniciaCarrinho() {
+  carregaCarrinho(
+    $.ajax({
+        url: '/carrinho/carregar',
+        method: 'GET'
+    })
+  );
+}
+
 function adicionaNoCarrinho(idProduto, quantidade) {
   carregaCarrinho(
     $.ajax({
@@ -27,31 +36,19 @@ function removeDoCarrinho(idItem) {
   );
 }
 
-function alteraNoCarrinho(idItem, quantidade) {
-    if(quantidade < 0.01) {
-        carregaCarrinho(
-            $.ajax({
-                url: '/carrinho/deletar/' + idItem,
-                method: 'GET'
-            })
-        );
-    } else {
-        carregaCarrinho(
-            $.ajax({
-                url: '/carrinho/editar/' + idItem + '/' + quantidade,
-                method: 'GET'
-            })
-        );
-    }
-}
-
-function delay(time) {
-  var resolve = null;
-  var promise = new Promise(function(res, rej) {
-    resolve = res;
-  });
-  setTimeout(function() {resolve('');}, time);
-  return promise;
+function removeProdutoDoItem(label, indexProduto) {
+  var itemElement = $(label).parents('.item');
+  var idItem = itemElement[0].dataset.item;
+  if(itemElement.find('.item-produto').length < 2) {
+    removeDoCarrinho(idItem);
+    return;
+  }
+  carregaCarrinho(
+    $.ajax({
+        url: '/carrinho/editar/' + idItem + '/' + indexProduto + '/0',
+        method: 'GET'
+    })
+  );
 }
 
 function ajaxPromise(url) {
@@ -68,7 +65,23 @@ function ajaxPromise(url) {
   return promise;
 }
 
+function confirmarPedido() {
+  alert('tá confirmado, tá tudo confirmado!!!');
+}
+
 function carregaCarrinho(jQueryAjaxObj) {
+    var valido = true;
+    if(clienteSelecionado == null) {
+      $('#virgula').html('Favor selecionar cliente');
+      valido = false;
+    } else {
+      $('#nome').html(clienteSelecionado.nome);
+      $('#sobrenome').html(clienteSelecionado.sobrenome);
+      $('#rua').html(clienteSelecionado.rua);
+      $('#numero').html(clienteSelecionado.numero);
+      $('#telefone').html(clienteSelecionado.telefone);
+      $('#virgula').html(', ');
+    }
     jQueryAjaxObj.done(async function(response) {
       var item = null;
       carrinho = JSON.parse(response);
@@ -91,25 +104,33 @@ function carregaCarrinho(jQueryAjaxObj) {
           numeroItem = '0' + numeroItem;
         }
         var precoTotal = 0;
+        var produtoIndex = 0;
+        var isMeio = false;
         for(produtoItem of item.produtos) {
           var produto = produtos['' + produtoItem.id_produto];
           var quantidade = '';
           if(produtoItem.quantidade < 1) {
             quantidade = '1/2';
             precoTotal += produto.fields.preco_meio;
+            isMeio = true;
           } else {
             precoTotal += produto.fields.preco;
           }
           produtosHtml += ITEM_CARRINHO_PRODUTO_TEMPLATE.format(
             quantidade,
-            produto.fields.nome
+            produto.fields.nome,
+            produtoIndex++
           );
+        }
+        if(isMeio && produtoIndex < 2) {
+          valido = false;
         }
         valorTotalCarrinho += precoTotal;
         htmlTotal += ITEM_CARRINHO_TEMPLATE.format(
           numeroItem,
           produtosHtml,
-          asMonetary(precoTotal)
+          asMonetary(precoTotal),
+          item.id_item
         );
       }
       if(!hasItens) {
@@ -119,12 +140,16 @@ function carregaCarrinho(jQueryAjaxObj) {
         asMonetary(valorTotalCarrinho)
       );
       $('#carrinho-itens').html(htmlTotal);
+      if(!valido) {
+        $('#confirmar-pedido').attr('disabled', 'disabled');
+      } else {
+        $('#confirmar-pedido').removeAttr('disabled');
+      }
       if(hasItens) {
         if(!cartStatus) {
           await toggleCarrinho();
         } else {
           await toggleCarrinho();
-          await delay(500);
           await toggleCarrinho();
         }
       }
@@ -150,9 +175,11 @@ function asMonetary(value) {
   return precoSplit.join(',');
 }
 
-function selectCustomer(pk) {
-  clienteSelecionado = pk;
-  alert('cliente selecionado é o ' + pk);
+async function selectCustomer(pk, iniciarCarrinho) {
+  clienteSelecionado = (JSON.parse(await ajaxPromise("/clientes/" + pk + '/dados')))[0]
+  if(iniciarCarrinho) {
+    iniciaCarrinho();
+  }
 }
 
 function toggleCarrinho() {
@@ -184,6 +211,7 @@ function toggleCarrinho() {
   } else {
     $('#botao-carrinho').css('background', '#346751').css('color', '#ffffff');
   };
+  return promise
 }
 
   var CLASSE_CSS_SELECIONADO = 'selecionado';

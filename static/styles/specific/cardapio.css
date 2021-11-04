@@ -29,6 +29,10 @@
     visibility: visible;
     margin-bottom:20px;
 }
+#confirmar-pedido:disabled {
+    background: #3d3c3c;
+    cursor: not-allowed;
+}
 
 #confirmar-pedido {
     margin-left: 20px;

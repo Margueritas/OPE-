@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from django.shortcuts import render,redirect
-from apps.common.models import Endereco, Usuario, ProdutoTipo, Produto, UsuarioEndereco
+from apps.common.models import Endereco, Usuario, ProdutoTipo, UsuarioEndereco
 from apps.common.business.rules.carrinho import get_carrinho_dict, save_carrinho_dict
 from apps.common.business.rules.clientes import load_cliente_data
 from apps.common.business.rules.produtos import buscar_produtos
@@ -21,14 +21,14 @@ def painel(request:HttpRequest) -> HttpResponse:
             'auxiliar': 'blank.html', 'sidebar': 'sidebar.html'})
 
 def clientes_modal(request:HttpRequest) -> HttpResponse:
-    lista_usuarios = load_cliente_data(None)
+    lista_usuarios = load_cliente_data(None, None)
     return render(request, 'painel.html', \
         context={'view': 'clientes.html', 'title': 'Selecione um cliente', \
             'usuarios': lista_usuarios, 'auxiliar': 'blank.html', \
                 'sidebar': 'blank.html', 'is_modal': '1'})
 
 def clientes(request:HttpRequest) -> HttpResponse:
-    lista_usuarios = load_cliente_data(None)
+    lista_usuarios = load_cliente_data(None, None)
     return render(request, 'painel.html', \
         context={'view': 'clientes.html', 'title': 'Clientes', \
             'usuarios': lista_usuarios, 'auxiliar': 'blank.html', \
@@ -36,7 +36,7 @@ def clientes(request:HttpRequest) -> HttpResponse:
 
 def clientes_busca(request:HttpRequest) -> HttpResponse:
     pesquisa = request.GET['pesquisa']
-    resposta_clientes = load_cliente_data(pesquisa)
+    resposta_clientes = load_cliente_data(None, pesquisa)
     return JsonResponse({"clientes": resposta_clientes}, safe=False)
 
 def clientes_delete(request:HttpRequest, pk):
@@ -50,7 +50,7 @@ def clientes_delete(request:HttpRequest, pk):
         print("ERRO")
     return redirect(clientes)
 
-def clientes_pagina_editar(request, pk):
+def clientes_pagina_editar(request:HttpRequest, pk) -> HttpResponse:
     usuario = Usuario.objects.get(id=pk)
     enderecos = UsuarioEndereco.objects.filter(idcliente=pk).all()
     enderecos_lista = []
@@ -63,6 +63,10 @@ def clientes_pagina_editar(request, pk):
     return render(request, 'painel.html', context={'view': 'clientes_editar.html', \
         'title': 'Editar cliente', 'dados': retorno, 'auxiliar': 'blank.html', \
             'sidebar': 'sidebar.html'})
+
+def clientes_dados(request:HttpRequest, pk) -> HttpResponse:
+    cliente = load_cliente_data(pk, None)
+    return HttpResponse(json.dumps(cliente))
 
 def clientes_cadastro(request:HttpRequest) -> HttpResponse:
     return render(request, 'painel.html', context={'view': 'clientes_cadastro.html', \
@@ -100,13 +104,15 @@ def carrinho_editar(request:HttpRequest, id_produto: int, quantidade: float, id_
                 item_novo['produtos'].append({'id_produto': id_produto, 'quantidade': quantidade})
                 carrinho.append(item_novo)
     else:
-        #acha item e modifica/adiciona
+        #acha item e modifica/adiciona/remove
         item_encontrado = None
         for item in carrinho:
             if item['id_item'] == id_item:
                 item_encontrado = item
                 break
-        if quantidade == 1 \
+        if quantidade == 0:
+            del item_encontrado['produtos'][id_produto]
+        elif quantidade == 1 \
             or len(item_encontrado['produtos']) > 1 \
             or (len(item_encontrado['produtos']) == 1 \
             and item_encontrado['produtos'][0]['quantidade'] == 1):
