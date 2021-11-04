@@ -80,7 +80,7 @@ $(document).ready(function(){
                 <span class="material-icons">menu_book</span>
                 <span class="label-botao-clientes">novo pedido</span>
             </button>
-            <button class="botao-clientes modal-show" style="display: none;" onclick="top.selectCustomer('${cliente.pk}')">
+            <button class="botao-clientes modal-show" style="display: none;" onclick="top.selectCustomer('${cliente.pk}', true)">
                 <span class="material-icons">done</span>
                 <span class="label-botao-clientes">selecionar</span>
             </button>

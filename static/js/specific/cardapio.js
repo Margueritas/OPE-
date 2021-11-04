@@ -8,6 +8,7 @@ var produtos = {};
 var ITEM_CARRINHO_PRODUTO_TEMPLATE = '';
 var ITEM_CARRINHO_TEMPLATE = '';
 var VALOR_TOTAL_TEMPLATE = '';
+var SELECT_CUSTOMER_TEMPLATE = '';
 
 function iniciaCarrinho() {
   carregaCarrinho(
@@ -81,7 +82,7 @@ function carregaCarrinho(jQueryAjaxObj) {
     showCarregando();
     var valido = true;
     if(clienteSelecionado == null) {
-      $('#virgula').html('Favor selecionar cliente');
+      $('#virgula').html(SELECT_CUSTOMER_TEMPLATE);
       valido = false;
     } else {
       $('#nome').html(clienteSelecionado.nome);
@@ -188,7 +189,12 @@ function asMonetary(value) {
 }
 
 async function selectCustomer(pk, iniciarCarrinho) {
+  if(iniciarCarrinho) {
+    $('#modalSelecionarCliente').modal('hide');
+  }
+  showCarregando();
   clienteSelecionado = (JSON.parse(await ajaxPromise("/clientes/" + pk + '/dados')))[0]
+  hideCarregando();
   if(iniciarCarrinho) {
     iniciaCarrinho();
   }

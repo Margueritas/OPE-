@@ -38,6 +38,7 @@
         await selectCustomer(cliente, false);
       }
       showCarregando();
+      SELECT_CUSTOMER_TEMPLATE = await ajaxPromise("{% static 'html/cardapio/botao_selecionar_cliente.html' %}");
       ITEM_TEMPLATE = await ajaxPromise("{% static 'html/cardapio/item.html' %}");
       ITEM_CARRINHO_TEMPLATE = await ajaxPromise("{% static 'html/cardapio/item_carrinho.html' %}");
       ITEM_CARRINHO_PRODUTO_TEMPLATE = await ajaxPromise("{% static 'html/cardapio/item_carrinho_produto.html' %}");
@@ -75,7 +76,15 @@ data-bs-backdrop="static" data-bs-keyboard="false">
 <div class="modal-dialog">
   <div class="modal-content">
   Carregando...
-    <!--<div class="modal-header">
+  </div>
+</div>
+</div>
+
+<div class="modal" tabindex="-1" id="modalSelecionarCliente"
+data-bs-backdrop="static" data-bs-keyboard="false">
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
       <h5 class="modal-title"></h5>
       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
@@ -84,9 +93,8 @@ data-bs-backdrop="static" data-bs-keyboard="false">
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-    </div>-->
+    </div>
   </div>
 </div>
 </div>
-
 {% endblock%}
