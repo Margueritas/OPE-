@@ -144,7 +144,7 @@ function carregaCarrinho(jQueryAjaxObj) {
         );
       }
       if(!hasItens) {
-        htmlTotal += 'Nenhum item no carrinho.';
+        htmlTotal += '<span style="margin-left: 15px;">Nenhum item no carrinho.</span>';
       }
       htmlTotal += VALOR_TOTAL_TEMPLATE.format(
         asMonetary(valorTotalCarrinho)
