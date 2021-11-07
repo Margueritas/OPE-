@@ -1,6 +1,8 @@
+import datetime
 from django.http import JsonResponse
 from django.shortcuts import render,redirect
-from apps.common.models import Endereco, Usuario, ProdutoTipo, UsuarioEndereco
+from apps.common.models import Endereco, Produto, Usuario, ProdutoTipo, UsuarioEndereco,\
+     Pedido, ProdutoPedido, StatusPedido, FormaPagamento
 from apps.common.business.rules.carrinho import get_carrinho_dict, save_carrinho_dict
 from apps.common.business.rules.clientes import load_cliente_data
 from apps.common.business.rules.produtos import buscar_produtos
@@ -216,6 +218,28 @@ def buscar_produto(request:HttpRequest) -> HttpResponse:
     id = request.GET.get("id")
     produtos_buscados = buscar_produtos(None, None, int(id))
     return HttpResponse(serializers.serialize('json', produtos_buscados, fields=('nome', 'descricao', 'preco', 'imagem', 'idtipo', 'preco_meio')))
+
+def pedidos_novo(request:HttpRequest) -> HttpResponse:
+    _ = json.loads(request.body)
+    id_cliente = _['cliente']
+    id_status = 1
+    id_forma_pagamento = 1
+    obs=''
+    pedido = Pedido.objects.create(obs=obs, data=datetime.datetime.now(),\
+        idstatus = StatusPedido.objects.filter(pk=id_status).get(),\
+            idformapagamento = FormaPagamento.objects.filter(pk=id_forma_pagamento).get(),\
+            idcliente = id_cliente)
+    id_pedido = pedido.pk
+    index = 1
+    for item in _['itens']:
+        for produto_item in item['produtos']:
+            ProdutoPedido.objects.create(quantidade = produto_item['quantidade'],\
+                preco = produto_item['preco'], idpedido = pedido,\
+                    idproduto = Produto.objects.filter(pk=produto_item['id_produto']).get(),\
+                    id = (id_pedido * 100) + index)
+            index = index + 1
+    return HttpResponse(id_pedido)
+
 
 def pedidos(request:HttpRequest) -> HttpResponse:
     return render(request, 'painel.html', context={ \
