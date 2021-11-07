@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.shortcuts import render,redirect
 from apps.common.models import Endereco, Produto, Usuario, ProdutoTipo, UsuarioEndereco,\
      Pedido, ProdutoPedido, StatusPedido, FormaPagamento
-from apps.common.business.rules.carrinho import get_carrinho_dict, save_carrinho_dict
+from apps.common.business.rules.carrinho import clear_carrinho_dict, get_carrinho_dict, save_carrinho_dict
 from apps.common.business.rules.clientes import load_cliente_data
 from apps.common.business.rules.produtos import buscar_produtos
 from django.http import HttpRequest, HttpResponse
@@ -238,7 +238,9 @@ def pedidos_novo(request:HttpRequest) -> HttpResponse:
                     idproduto = Produto.objects.filter(pk=produto_item['id_produto']).get(),\
                     id = (id_pedido * 100) + index)
             index = index + 1
-    return HttpResponse(id_pedido)
+    response = HttpResponse(id_pedido)
+    clear_carrinho_dict(response)
+    return response
 
 
 def pedidos(request:HttpRequest) -> HttpResponse:
