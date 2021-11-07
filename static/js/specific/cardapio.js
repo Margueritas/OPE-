@@ -62,10 +62,12 @@ function hideCarregando() {
 }
 
 function ajaxPromise(url, body) {
-  method = 'POST';
+  var method = 'POST';
+  var data = null;
   if(body == undefined) {
     method = 'GET';
-    body = null
+  } else {
+    data = JSON.stringify(body);
   }
   var resolve = null;
   var reject = null;
@@ -76,7 +78,7 @@ function ajaxPromise(url, body) {
   $.ajax({
     url: url,
     method: method,
-    data: JSON.stringify(body),
+    data: data,
     processData: false
   }).done(function(response) {
     resolve(response);
