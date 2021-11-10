@@ -26,5 +26,6 @@ urlpatterns = [
     path('cardapio/busca', views.cardapio_busca, name='cardapio_busca'),
     path('cardapio/<cliente_selecionado>', views.cardapio_cliente, name='cardapio_cliente'),
     path('produto', views.buscar_produto, name='buscar_produtos'),
+    path('pedidos/novo', views.pedidos_novo, name='pedidos_novo'),
     path('pedidos/', views.pedidos, name='pedidos'),
 ]
