@@ -1,8 +1,12 @@
-from django.db.models import Q
+import datetime
 from django.http import JsonResponse
-from django.shortcuts import render,redirect, get_list_or_404
-from apps.common.models import Endereco, Usuario, ProdutoTipo, Produto, UsuarioEndereco
-from apps.common.carrinho import get_carrinho_dict, save_carrinho_dict
+from django.shortcuts import render,redirect
+from django.views.decorators.csrf import csrf_exempt
+from apps.common.models import Endereco, Produto, Usuario, ProdutoTipo, UsuarioEndereco,\
+     Pedido, ProdutoPedido, StatusPedido, FormaPagamento
+from apps.common.business.rules.carrinho import clear_carrinho_dict, get_carrinho_dict, save_carrinho_dict
+from apps.common.business.rules.clientes import load_cliente_data
+from apps.common.business.rules.produtos import buscar_produtos
 from django.http import HttpRequest, HttpResponse
 from django.core import serializers
 import json
@@ -15,52 +19,28 @@ def index(request:HttpRequest) -> HttpResponse:
         return redirect('login')
 
 def painel(request:HttpRequest) -> HttpResponse:
+    return redirect('clientes')
+    # return render(request, 'painel.html', \
+    #     context={'view': 'clientes.html', 'title': 'Clientes', \
+    #         'auxiliar': 'blank.html', 'sidebar': 'sidebar.html'})
+
+def clientes_modal(request:HttpRequest) -> HttpResponse:
+    lista_usuarios = load_cliente_data(None, None)
     return render(request, 'painel.html', \
-        context={'view': 'pedidos.html', 'title': 'Pedidos', 'auxiliar': 'blank.html'})
+        context={'view': 'clientes.html', 'title': 'Selecione um cliente', \
+            'usuarios': lista_usuarios, 'auxiliar': 'blank.html', \
+                'sidebar': 'blank.html', 'is_modal': '1'})
 
 def clientes(request:HttpRequest) -> HttpResponse:
-    usuarios = Usuario.objects.filter(is_staff=False)
-    lista_usuarios = []
-    for usuario in usuarios:
-        usuario_pk = UsuarioEndereco.objects.filter(idcliente=usuario.pk,primario=True).values_list('idendereco', flat=True)
-        if len(usuario_pk) > 0:
-            tel = usuario.telefone
-            e = Endereco.objects.get(id=usuario_pk[0])
-            u = {
-            'pk': usuario.pk,
-            'nome': usuario.nome,
-            'sobrenome': usuario.sobrenome,
-            'cpf': usuario.cpf,
-            'telefone': f'({tel[0:2]}) {tel[2:7]}-{tel[7:]}',
-            'rua': e.logradouro,
-            'numero': e.numero,
-            }
-            lista_usuarios.append(u)
+    lista_usuarios = load_cliente_data(None, None)
     return render(request, 'painel.html', \
         context={'view': 'clientes.html', 'title': 'Clientes', \
-            'usuarios': lista_usuarios, 'auxiliar': 'blank.html'})
+            'usuarios': lista_usuarios, 'auxiliar': 'blank.html', \
+                'sidebar': 'sidebar.html', 'is_modal': '0'})
 
-def clientes_busca(request):
+def clientes_busca(request:HttpRequest) -> HttpResponse:
     pesquisa = request.GET['pesquisa']
-    if pesquisa == '':
-        clientes_filtrados = Usuario.objects.filter(is_staff=False)
-    else:
-        clientes_filtrados = Usuario.objects.filter(Q(nome__icontains=pesquisa) | Q(sobrenome__icontains=pesquisa) | Q(telefone__icontains=pesquisa) & Q(is_staff=False))
-    resposta_clientes = []
-    for cliente in clientes_filtrados:
-        endereco_cliente_pk = UsuarioEndereco.objects.filter(idcliente=cliente.pk,primario=True).values_list('idendereco', flat=True)
-        if len(endereco_cliente_pk) > 0:
-            tel = cliente.telefone
-            endereco = Endereco.objects.get(id=endereco_cliente_pk[0])
-            obj_cliente = {
-            'pk': cliente.pk,
-            'nome': cliente.nome,
-            'sobrenome': cliente.sobrenome,
-            'telefone': f'({tel[0:2]}) {tel[2:7]}-{tel[7:]}',
-            'rua': endereco.logradouro,
-            'numero': endereco.numero,
-            }
-            resposta_clientes.append(obj_cliente)
+    resposta_clientes = load_cliente_data(None, pesquisa)
     return JsonResponse({"clientes": resposta_clientes}, safe=False)
 
 def clientes_delete(request:HttpRequest, pk):
@@ -74,7 +54,7 @@ def clientes_delete(request:HttpRequest, pk):
         print("ERRO")
     return redirect(clientes)
 
-def clientes_pagina_editar(request, pk):
+def clientes_pagina_editar(request:HttpRequest, pk) -> HttpResponse:
     usuario = Usuario.objects.get(id=pk)
     enderecos = UsuarioEndereco.objects.filter(idcliente=pk).all()
     enderecos_lista = []
@@ -85,11 +65,17 @@ def clientes_pagina_editar(request, pk):
         "enderecos": enderecos_lista
     }
     return render(request, 'painel.html', context={'view': 'clientes_editar.html', \
-        'title': 'Editar cliente', 'dados': retorno, 'auxiliar': 'blank.html'})
+        'title': 'Editar cliente', 'dados': retorno, 'auxiliar': 'blank.html', \
+            'sidebar': 'sidebar.html'})
+
+def clientes_dados(request:HttpRequest, pk) -> HttpResponse:
+    cliente = load_cliente_data(pk, None)
+    return HttpResponse(json.dumps(cliente))
 
 def clientes_cadastro(request:HttpRequest) -> HttpResponse:
     return render(request, 'painel.html', context={'view': 'clientes_cadastro.html', \
-        'title': 'Cadastrar cliente', 'auxiliar': 'blank.html'})
+        'title': 'Cadastrar cliente', 'auxiliar': 'blank.html', \
+            'sidebar': 'sidebar.html'})
 
 def carrinho_editar(request:HttpRequest, id_produto: int, quantidade: float, id_item: int) -> HttpResponse:
     id_produto = int(id_produto)
@@ -122,13 +108,15 @@ def carrinho_editar(request:HttpRequest, id_produto: int, quantidade: float, id_
                 item_novo['produtos'].append({'id_produto': id_produto, 'quantidade': quantidade})
                 carrinho.append(item_novo)
     else:
-        #acha item e modifica/adiciona
+        #acha item e modifica/adiciona/remove
         item_encontrado = None
         for item in carrinho:
             if item['id_item'] == id_item:
                 item_encontrado = item
                 break
-        if quantidade == 1 \
+        if quantidade == 0:
+            del item_encontrado['produtos'][id_produto]
+        elif quantidade == 1 \
             or len(item_encontrado['produtos']) > 1 \
             or (len(item_encontrado['produtos']) == 1 \
             and item_encontrado['produtos'][0]['quantidade'] == 1):
@@ -207,6 +195,9 @@ def clientes_editar(request:HttpRequest) -> HttpResponse:
     return JsonResponse(resposta)
 
 def cardapio(request:HttpRequest) -> HttpResponse:
+    return cardapio_cliente(request, '')
+
+def cardapio_cliente(request:HttpRequest, cliente_selecionado: str) -> HttpResponse:
     tipos_produtos = ProdutoTipo.objects.all()
     tipo_selecionado = request.GET.get("tipo")
     tipo_ativo: ProdutoTipo
@@ -216,17 +207,46 @@ def cardapio(request:HttpRequest) -> HttpResponse:
         tipo_ativo = ProdutoTipo.objects.get(id=tipo_selecionado)
     return render(request, 'painel.html', context={'view': 'cardapio.html', \
         'title': 'Cardápio', 'tipos': tipos_produtos, \
-            "tipo_ativo": tipo_ativo, 'auxiliar': 'cardapio_busca.html'})
+            "tipo_ativo": tipo_ativo, 'auxiliar': 'cardapio_busca.html', \
+                'sidebar': 'sidebar.html', 'cliente_selecionado': cliente_selecionado})
 
 def cardapio_busca(request:HttpRequest) -> HttpResponse:
     tipo_desejado = request.GET.get("tipo")
     pesquisa = request.GET.get('pesquisa')
-    if pesquisa is None:
-        pesquisa = ''
-    tipo = ProdutoTipo.objects.get(id=tipo_desejado)
-    produtos_buscados = Produto.objects.filter(idtipo=tipo, nome__icontains=pesquisa)
+    produtos_buscados = buscar_produtos(tipo_desejado, pesquisa, -1)
     return HttpResponse(serializers.serialize('json', produtos_buscados, fields=('nome', 'descricao', 'preco', 'imagem', 'idtipo', 'preco_meio')))
+
+def buscar_produto(request:HttpRequest) -> HttpResponse:
+    id = request.GET.get("id")
+    produtos_buscados = buscar_produtos(None, None, int(id))
+    return HttpResponse(serializers.serialize('json', produtos_buscados, fields=('nome', 'descricao', 'preco', 'imagem', 'idtipo', 'preco_meio')))
+
+@csrf_exempt
+def pedidos_novo(request:HttpRequest) -> HttpResponse:
+    _ = json.loads(request.body)
+    id_cliente = _['cliente']
+    status_preparacao = "Em preparação"
+    forma_pagamento = "Crédito"
+    obs=''
+    pedido = Pedido.objects.create(obs=obs, data=datetime.datetime.now(),\
+            idstatus = StatusPedido.objects.filter(status=status_preparacao).get(),\
+            idformapagamento = FormaPagamento.objects.filter(forma=forma_pagamento).get(),\
+            idcliente = id_cliente)
+    id_pedido = pedido.pk
+    index = 1
+    for item in _['itens']:
+        for produto_item in item['produtos']:
+            ProdutoPedido.objects.create(quantidade = produto_item['quantidade'],\
+                preco = produto_item['preco'], idpedido = pedido,\
+                    idproduto = Produto.objects.filter(pk=produto_item['id_produto']).get(),\
+                    id = (id_pedido * 100) + index)
+            index = index + 1
+    response = HttpResponse(id_pedido)
+    clear_carrinho_dict(response)
+    return response
+
 
 def pedidos(request:HttpRequest) -> HttpResponse:
     return render(request, 'painel.html', context={ \
-        'view': 'pedidos.html', 'title': 'Pedidos', 'auxiliar': 'blank.html'})
+        'view': 'pedidos.html', 'title': 'Pedidos', 'auxiliar': 'blank.html', \
+            'sidebar': 'sidebar.html'})

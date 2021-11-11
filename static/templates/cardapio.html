@@ -1,49 +1,64 @@
 {% block content %}
 {% load static %}
-<div style="position: absolute;top: 13px;right: 25px;">
-  <a href="#" onclick="
-    console.log($('#medida').height()+'px');
-    if($('#carrinho').css('height')==='0px'){
-      $('#carrinho').css({'visibility':'visible','opacity':'100','border':'1px solid #34675154','height':$('#medida').height()+'px','transition':'opacity 250ms, height 150ms ease-out'});
-    }
-    else {
-      $('#carrinho').css({'opacity':'0','border':'1px solid #white','height':'0','transition':'opacity 250ms, height 150ms ease-in, border-color 250ms ease'});
-      setTimeout(function(){
-        $('#carrinho').css({'border':'0','visibility':'collapse'});
-      }, 270);
-    };
-    $('#setacarrinho').toggleClass('d-none');
-    if($('#botao-carrinho').css('background-color').toString()=='rgb(52, 103, 81)') {
-      $('#botao-carrinho').css('background', '#ffffff').css('color', '#346751').css('transition','background-color 250ms ease-in');
-    }
-    else {
-      $('#botao-carrinho').css('background', '#346751').css('color', '#ffffff');
-    };">
+<style>
+  @import url("{% static 'styles/specific/cardapio.css' %}");
+</style>
+<div id="botaoCarrinho" class="d-none" style="position: absolute;top: 13px;right: 25px;">
+  <a href="javascript://" onclick="toggleCarrinho();">
     <span id="botao-carrinho" class="material-icons" style="font-size: 35px; color: white; background: #346751;padding:12px;border-radius: 50%;">shopping_cart</span>
   </a>
 </div>
-<div id="setacarrinho" class="d-none" style="position: absolute; top: 72px; right: 40px; width: 0; height: 0; border-left: 15px solid transparent;border-right: 15px solid transparent;border-bottom: 15px solid #34675154;"></div>
-<div id="carrinho" style="visibility:collapse; opacity: 0; height: 0; transition: height 300ms ease-out; width: 350px; position: absolute; top: 87px; right: 25px; background-color: white; border: 0px solid #34675154;">
-<div id='medida'>
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<div id="setacarrinho" class="d-none" style="position: absolute; top: 72px; right: 40px; width: 0; height: 0; border-left: 15px solid transparent;border-right: 15px solid transparent;border-bottom: 15px solid #34675154;">
 </div>
+
+<div id="carrinho" style="display: none;">
+  
+  <div id="medida">
+    
+    <h3 class="carrinho-titulo">Confira se o pedido está correto</h3>
+    
+    <div class="carrinho-dados-cliente">
+      <span><span id="nome"></span> <span id="sobrenome"></span></span>
+      <span><span id="rua"></span><span id="virgula"></span><span id="numero"></span></span>
+      <span id="telefone"></span>
+    </div>
+
+
+    <div id="carrinho-itens">
+      <div class="spinner-border ms-2" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+    <div id="carrinho-botao-confirmar">
+      <button id="confirmar-pedido" onclick="confirmarPedido();"><span class="material-icons">check</span>confirmar pedido</button>
+    </div>
+  </div>
 </div>
+<script type="text/javascript" src="{% static 'js/specific/cardapio.js' %}"></script>
 <script>
-    var tipoAtivo = '{{ tipo_ativo.id }}';
-    $(document).ready(function() {
-      $.ajax({
-        url: "{% static 'html/cardapio_item.html' %}",
-        method: 'GET'
-      }).done(function(response) {
-        ITEM_TEMPLATE = response;
-        containerItens = $('#cardapio-items');
-        CARREGANDO = containerItens.html();
-        trocaTipo(tipoAtivo);
-      });
+    window.CSRF_TOKEN = '{{ csrf_token }}';
+    $(document).ready(async function() {
+      var cliente = '{{ cliente_selecionado }}';
+      if(cliente != null && cliente != '') {
+        await selectCustomer(cliente, false);
+        if ($("#botaoCarrinho").hasClass('d-none')) $("#botaoCarrinho").removeClass("d-none")
+      }
+      showCarregando();
+      // SELECT_CUSTOMER_TEMPLATE = await ajaxPromise("{% static 'html/cardapio/botao_selecionar_cliente.html' %}");
+      ITEM_TEMPLATE = await ajaxPromise("{% static 'html/cardapio/item.html' %}");
+      ITEM_CARRINHO_TEMPLATE = await ajaxPromise("{% static 'html/cardapio/item_carrinho.html' %}");
+      ITEM_CARRINHO_PRODUTO_TEMPLATE = await ajaxPromise("{% static 'html/cardapio/item_carrinho_produto.html' %}");
+      VALOR_TOTAL_TEMPLATE = await ajaxPromise("{% static 'html/cardapio/valor_total.html' %}");
+      containerItens = $('#cardapio-items');
+      CARREGANDO = containerItens.html();
+      trocaTipo('{{ tipo_ativo.id }}');
+      if(cliente != null && cliente != '') {
+        iniciaCarrinho();
+      }
+      hideCarregando();
     });
   
 </script>
-<script type="text/javascript" src="{% static 'js/specific/cardapio.js' %}"></script>
 <div id="texto">
     <p style="margin-top: 20px; margin-bottom: 20px; line-height: 50px; vertical-align: middle;">Selecione os itens do pedido</p>
 </div>
@@ -61,36 +76,28 @@
 </div>
 
 <div class="container-pizzas">
-    <section class="grid grid-3-columns" id="cardapio-items">Carregando...</section>
+    <section class="grid grid-3-columns" id="cardapio-items">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+  </section>
 </div>
 
-<div class="modal" tabindex="-1" id="modalSelecionarQuantidade"
+<div class="modal" tabindex="-1" id="modalSelecionarCliente"
 data-bs-backdrop="static" data-bs-keyboard="false">
 <div class="modal-dialog">
   <div class="modal-content">
     <div class="modal-header">
-      <h5 class="modal-title">Quantidade</h5>
+      <h5 class="modal-title"></h5>
       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
     <div class="modal-body">
-      Selecione a quantidade para o produto
-      <span id="nome-produto-quantidade"></span>:
-      <br/>
-      <label for="produto-inteira">Inteira</label>
-      <input class="produto-quantidade" name="produto-quantidade"
-        type="radio" id="produto-inteira" value="1.0" checked="checked"/>
-      <label for="produto-meia">Meia</label>
-      <input class="produto-quantidade" name="produto-quantidade"
-        type="radio" id="produto-meia" value="0.5"/>
+      <iframe src="/clientes/modal" width="600" height="400"></iframe>
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
-        onclick="alteraNoCarrinho(itemSelecionado, $('input[name=\'produto-quantidade\']:checked').val())">
-            Ok</button>
       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
     </div>
   </div>
 </div>
 </div>
-
 {% endblock%}

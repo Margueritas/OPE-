@@ -13,3 +13,7 @@ def get_carrinho_dict(req:HttpRequest) -> list:
 
 def save_carrinho_dict(resp:HttpResponse, carrinho:list):
     resp.set_cookie(COOKIE_KEY, base64.b64encode(json.dumps(carrinho).encode('ascii')).decode('ascii'))
+
+    
+def clear_carrinho_dict(resp:HttpResponse):
+    save_carrinho_dict(resp, [])

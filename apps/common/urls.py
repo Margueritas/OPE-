@@ -11,7 +11,9 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(next_page=settings.LOGOUT_REDIRECT_URL), name='logout'),
     path('painel/', views.painel, name='painel'),
     path('clientes/', views.clientes, name='clientes'),
+    path('clientes/modal/', views.clientes_modal, name='clientes_modal'),
     path('clientes/cadastro', views.clientes_cadastro, name='clientes_cadastro'),
+    path('clientes/<int:pk>/dados', views.clientes_dados, name='clientes_dados'),
     path('clientes/<int:pk>', views.clientes_pagina_editar, name='clientes_pagina_editar'),
     path('clientes/editar/', views.clientes_editar, name='clientes_editar'),
     path('clientes/delete/<pk>', views.clientes_delete, name='clientes_delete'),
@@ -22,5 +24,8 @@ urlpatterns = [
     path('carrinho/carregar', views.carrinho_carregar, name='carrinho_carregar'),
     path('cardapio/', views.cardapio, name='cardapio'),
     path('cardapio/busca', views.cardapio_busca, name='cardapio_busca'),
+    path('cardapio/<cliente_selecionado>', views.cardapio_cliente, name='cardapio_cliente'),
+    path('produto', views.buscar_produto, name='buscar_produtos'),
+    path('pedidos/novo', views.pedidos_novo, name='pedidos_novo'),
     path('pedidos/', views.pedidos, name='pedidos'),
 ]

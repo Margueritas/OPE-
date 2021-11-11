@@ -10,3 +10,4 @@ config/dev/
 Procfile.dev
 info_local.txt
 .env.local
+*.orig
