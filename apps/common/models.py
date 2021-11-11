@@ -70,7 +70,7 @@ class Endereco(models.Model):
         db_table = 'endereco'
 
 class FormaPagamento(models.Model):
-    forma = models.IntegerField()
+    forma = models.CharField(max_length=255)
 
     class Meta:
         managed = False

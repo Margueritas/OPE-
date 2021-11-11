@@ -3,7 +3,7 @@
 <style>
   @import url("{% static 'styles/specific/cardapio.css' %}");
 </style>
-<div style="position: absolute;top: 13px;right: 25px;">
+<div id="botaoCarrinho" class="d-none" style="position: absolute;top: 13px;right: 25px;">
   <a href="javascript://" onclick="toggleCarrinho();">
     <span id="botao-carrinho" class="material-icons" style="font-size: 35px; color: white; background: #346751;padding:12px;border-radius: 50%;">shopping_cart</span>
   </a>
@@ -24,7 +24,11 @@
     </div>
 
 
-    <div id="carrinho-itens">Carregando...</div>
+    <div id="carrinho-itens">
+      <div class="spinner-border ms-2" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
     <div id="carrinho-botao-confirmar">
       <button id="confirmar-pedido" onclick="confirmarPedido();"><span class="material-icons">check</span>confirmar pedido</button>
     </div>
@@ -32,13 +36,15 @@
 </div>
 <script type="text/javascript" src="{% static 'js/specific/cardapio.js' %}"></script>
 <script>
+    window.CSRF_TOKEN = '{{ csrf_token }}';
     $(document).ready(async function() {
       var cliente = '{{ cliente_selecionado }}';
       if(cliente != null && cliente != '') {
         await selectCustomer(cliente, false);
+        if ($("#botaoCarrinho").hasClass('d-none')) $("#botaoCarrinho").removeClass("d-none")
       }
       showCarregando();
-      SELECT_CUSTOMER_TEMPLATE = await ajaxPromise("{% static 'html/cardapio/botao_selecionar_cliente.html' %}");
+      // SELECT_CUSTOMER_TEMPLATE = await ajaxPromise("{% static 'html/cardapio/botao_selecionar_cliente.html' %}");
       ITEM_TEMPLATE = await ajaxPromise("{% static 'html/cardapio/item.html' %}");
       ITEM_CARRINHO_TEMPLATE = await ajaxPromise("{% static 'html/cardapio/item_carrinho.html' %}");
       ITEM_CARRINHO_PRODUTO_TEMPLATE = await ajaxPromise("{% static 'html/cardapio/item_carrinho_produto.html' %}");
@@ -46,8 +52,10 @@
       containerItens = $('#cardapio-items');
       CARREGANDO = containerItens.html();
       trocaTipo('{{ tipo_ativo.id }}');
+      if(cliente != null && cliente != '') {
+        iniciaCarrinho();
+      }
       hideCarregando();
-      iniciaCarrinho();
     });
   
 </script>
@@ -68,16 +76,11 @@
 </div>
 
 <div class="container-pizzas">
-    <section class="grid grid-3-columns" id="cardapio-items">Carregando...</section>
-</div>
-
-<div class="modal" tabindex="-1" id="modalCarregando"
-data-bs-backdrop="static" data-bs-keyboard="false">
-<div class="modal-dialog">
-  <div class="modal-content">
-  Carregando...
-  </div>
-</div>
+    <section class="grid grid-3-columns" id="cardapio-items">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+  </section>
 </div>
 
 <div class="modal" tabindex="-1" id="modalSelecionarCliente"

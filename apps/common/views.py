@@ -1,6 +1,7 @@
 import datetime
 from django.http import JsonResponse
 from django.shortcuts import render,redirect
+from django.views.decorators.csrf import csrf_exempt
 from apps.common.models import Endereco, Produto, Usuario, ProdutoTipo, UsuarioEndereco,\
      Pedido, ProdutoPedido, StatusPedido, FormaPagamento
 from apps.common.business.rules.carrinho import clear_carrinho_dict, get_carrinho_dict, save_carrinho_dict
@@ -18,9 +19,10 @@ def index(request:HttpRequest) -> HttpResponse:
         return redirect('login')
 
 def painel(request:HttpRequest) -> HttpResponse:
-    return render(request, 'painel.html', \
-        context={'view': 'pedidos.html', 'title': 'Pedidos', \
-            'auxiliar': 'blank.html', 'sidebar': 'sidebar.html'})
+    return redirect('clientes')
+    # return render(request, 'painel.html', \
+    #     context={'view': 'clientes.html', 'title': 'Clientes', \
+    #         'auxiliar': 'blank.html', 'sidebar': 'sidebar.html'})
 
 def clientes_modal(request:HttpRequest) -> HttpResponse:
     lista_usuarios = load_cliente_data(None, None)
@@ -219,15 +221,16 @@ def buscar_produto(request:HttpRequest) -> HttpResponse:
     produtos_buscados = buscar_produtos(None, None, int(id))
     return HttpResponse(serializers.serialize('json', produtos_buscados, fields=('nome', 'descricao', 'preco', 'imagem', 'idtipo', 'preco_meio')))
 
+@csrf_exempt
 def pedidos_novo(request:HttpRequest) -> HttpResponse:
     _ = json.loads(request.body)
     id_cliente = _['cliente']
-    id_status = 1
-    id_forma_pagamento = 1
+    status_preparacao = "Em preparação"
+    forma_pagamento = "Crédito"
     obs=''
     pedido = Pedido.objects.create(obs=obs, data=datetime.datetime.now(),\
-        idstatus = StatusPedido.objects.filter(pk=id_status).get(),\
-            idformapagamento = FormaPagamento.objects.filter(pk=id_forma_pagamento).get(),\
+            idstatus = StatusPedido.objects.filter(status=status_preparacao).get(),\
+            idformapagamento = FormaPagamento.objects.filter(forma=forma_pagamento).get(),\
             idcliente = id_cliente)
     id_pedido = pedido.pk
     index = 1
