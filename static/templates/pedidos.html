@@ -1,3 +1,12 @@
 {% block content %}
+{% load static %}
+
+<script type="text/javascript" src="{% static 'js/specific/pedidos.js' %}"></script>
+<script>
+    $(document).ready(async function() {
+        PEDIDO_TEMPLATE = await ajaxPromise("{% static 'html/pedidos/pedido.html' %}");
+        await carregaPedidos();
+    });
+</script>
 
 {% endblock%}

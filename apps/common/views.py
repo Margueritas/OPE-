@@ -2,13 +2,17 @@ import datetime
 from django.http import JsonResponse
 from django.shortcuts import render,redirect
 from django.views.decorators.csrf import csrf_exempt
-from apps.common.models import Endereco, Produto, Usuario, ProdutoTipo, UsuarioEndereco,\
-     Pedido, ProdutoPedido, StatusPedido, FormaPagamento
-from apps.common.business.rules.carrinho import clear_carrinho_dict, get_carrinho_dict, save_carrinho_dict
+from django.db.models import Q
+from apps.common.models import Endereco, Produto, Usuario,\
+    ProdutoTipo, UsuarioEndereco,\
+    Pedido, ProdutoPedido, StatusPedido, FormaPagamento
+from apps.common.business.rules.carrinho import clear_carrinho_dict,\
+    get_carrinho_dict, save_carrinho_dict
 from apps.common.business.rules.clientes import load_cliente_data
 from apps.common.business.rules.produtos import buscar_produtos
 from django.http import HttpRequest, HttpResponse
 from django.core import serializers
+from datetime import datetime
 import json
 
 # Create your views here.
@@ -245,8 +249,47 @@ def pedidos_novo(request:HttpRequest) -> HttpResponse:
     clear_carrinho_dict(response)
     return response
 
+def pedidos_carregar(request:HttpRequest) -> HttpResponse:
+    status_preparacao = "Em preparação"
+    pedidos = Pedido.objects.filter(Q(data=datetime.now().date()) |\
+        Q(idstatus = StatusPedido.objects.filter(status=status_preparacao).get())).all()
+    pedidos_tela = []
+    for pedido in pedidos:
+        cliente = load_cliente_data(pedido.idcliente, None)
+        pedido_atual = {
+            'cliente': cliente,
+            'id': pedido.pk,
+            'status': pedido.idstatus.pk,
+            'status_texto': pedido.idstatus.status
+        }
+        pedido_atual['produtos'] = []
+        pedido_produtos = ProdutoPedido.objects.filter(idpedido=pedido.pk).all()
+        for pedido_produto in pedido_produtos:
+            produto = Produto.objects.filter(pk=pedido_produto.idproduto.pk).get()
+            produto_lista = {
+                'nome': produto.nome,
+                'preco': pedido_produto.preco,
+                'quantidade': pedido_produto.quantidade
+            }
+            pedido_atual['produtos'].append(produto_lista)
+        pedidos_tela.append(pedido_atual)
+    return HttpResponse(json.dumps(pedidos_tela))
+
+def pedidos_finalizar(request:HttpRequest, pk:int) -> HttpResponse:
+    status_preparacao = "Finalizado"
+    Pedido.objects.filter(pk=pk).update(
+        idstatus = StatusPedido.objects.filter(status=status_preparacao).get()
+    )
+    return pedidos_carregar(request)
+
+def pedidos_cancelar(request:HttpRequest, pk:int) -> HttpResponse:
+    status_preparacao = "Cancelado"
+    Pedido.objects.filter(pk=pk).update(
+        idstatus = StatusPedido.objects.filter(status=status_preparacao).get()
+    )
+    return pedidos_carregar(request)
 
 def pedidos(request:HttpRequest) -> HttpResponse:
-    return render(request, 'painel.html', context={ \
-        'view': 'pedidos.html', 'title': 'Pedidos', 'auxiliar': 'blank.html', \
+    return render(request, 'painel.html', context={\
+        'view': 'pedidos.html', 'title': 'Pedidos', 'auxiliar': 'blank.html',\
             'sidebar': 'sidebar.html'})
