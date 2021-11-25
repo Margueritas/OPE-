@@ -68,48 +68,29 @@ function hideCarregando() {
   }
 }
 
-function ajaxPromise(url, body) {
-  var method = 'POST';
-  var data = null;
-  if(body == undefined) {
-    method = 'GET';
-  } else {
-    var formData = new FormData();
-    data = JSON.stringify(body);
-    // formData.append('data', body);
-  }
-  var resolve = null;
-  var reject = null;
-  var promise = new Promise(function(res, rej) {
-    resolve = res;
-    reject = rej;
-  });
-  $.ajax({
-    url: url,
-    type: method,
-    data: data,
-    csrfmiddlewaretoken: window.CSRF_TOKEN,
-    processData: false,
-    mimeType: "multipart/form-data",
-    contentType: false,
-    cache: false,
-  }).done(function(response) {
-    resolve(response);
-  }).fail(function(ig1, ig2, error) {
-    reject(error)
-  });
-  return promise;
-}
-
 async function confirmarPedido() {
-  showCarregando();
-  var idPedidoNovo = await ajaxPromise('/pedidos/novo', pedidoData);
-  if(isNaN(parseInt(idPedidoNovo))) {
-    hideCarregando();
-    alert('Ocorreu um erro ao confirmar o pedido.');
-    return;
+  console.log(pedidoData);
+  for (let item of pedidoData.itens) {
+    if (item.produtos.length > 1) {
+      let metadeAnt = null;
+      for (let metade of item.produtos) {
+        if (metadeAnt == null) {metadeAnt = metade.id_tipo}
+        else {if (metadeAnt != metade.id_tipo) {
+          if(confirm("Sabores doce e salgado na mesma pizza. Continuar?")){
+            showCarregando();
+            var idPedidoNovo = await ajaxPromise('/pedidos/novo', pedidoData);
+            if(isNaN(parseInt(idPedidoNovo))) {
+              hideCarregando();
+              alert('Ocorreu um erro ao confirmar o pedido.');
+              return;
+            }
+            document.location.replace('/pedidos');
+            }
+          }
+        }
+      }
+    }
   }
-  document.location.replace('/pedidos');
 }
 
 function carregaCarrinho(jQueryAjaxObj) {
@@ -117,7 +98,6 @@ function carregaCarrinho(jQueryAjaxObj) {
     if(clienteSelecionado == null) {
       valido = false;
       return false;
-      $('#virgula').html(SELECT_CUSTOMER_TEMPLATE);
     } else {
       showCarregando();
       $('#nome').html(clienteSelecionado.nome);
@@ -166,7 +146,8 @@ function carregaCarrinho(jQueryAjaxObj) {
         var isMeio = false;
         for(produtoItem of item.produtos) {
           var produtoData = {
-            id_produto: produtoItem.id_produto
+            id_produto: produtoItem.id_produto,
+            id_tipo: '',
           };
           var produto = produtos['' + produtoItem.id_produto];
           var quantidade = '';
@@ -179,6 +160,7 @@ function carregaCarrinho(jQueryAjaxObj) {
             precoTotal += produto.fields.preco;
             produtoData.preco = produto.fields.preco;
           }
+          produtoData.id_tipo = produto.fields.idtipo;
           produtoData.quantidade = produtoItem.quantidade;
           produtosHtml += ITEM_CARRINHO_PRODUTO_TEMPLATE.format(
             quantidade,

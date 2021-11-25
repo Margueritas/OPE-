@@ -66,12 +66,7 @@ $(document).ready(function(){
             <p class="item-card-dados-cliente">${cliente.telefone}</p>
             <p class="item-card-dados-cliente">${cliente.rua}, ${cliente.numero}</p>
         </div>
-        <div style="display: flex; justify-content: end; padding-right: 10px;">
-            <button class="botao-clientes modal-hide" data-bs-toggle="modal" data-bs-target="#modalConfirmarDelete"
-                onclick="openModalDeleteUser('${cliente.pk}', '${cliente.nome}', '${cliente.sobrenome}', '${cliente.telefone}');">
-                <span class="material-icons">delete_outline</span>
-                <span class="label-botao-clientes">excluir</span>
-            </button>
+        <div style="display: flex; justify-content: center; padding-right: 10px;">
             <button class="botao-clientes modal-hide" onclick="editar('${cliente.pk}')">
                 <span class="material-icons">edit</span>
                 <span class="label-botao-clientes">editar</span>

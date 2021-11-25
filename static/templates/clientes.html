@@ -25,13 +25,8 @@
             <p class="item-card-dados-cliente">{{ usuario.telefone }}</p>
             <p class="item-card-dados-cliente">{{ usuario.rua }}, {{ usuario.numero }}</p>
         </div>
-        <div style="display: flex; justify-content: end; padding-right: 10px;">
-            <button class="botao-clientes modal-hide" data-bs-toggle="modal"
-              data-bs-target="#modalConfirmarDelete"
-              onclick="openModalDeleteUser('{{ usuario.pk }}', '{{ usuario.nome }}', '{{ usuario.sobrenome }}', '{{ usuario.telefone }}');">
-                <span class="material-icons">delete_outline</span>
-                <span class="label-botao-clientes">excluir</span>
-            </button>
+        <div style="display: flex; justify-content: center; padding-right: 10px;">
+            
             <button class="botao-clientes modal-hide" onclick="editar('{{usuario.pk}}')">
                 <span class="material-icons">edit</span>
                 <span class="label-botao-clientes">editar</span>

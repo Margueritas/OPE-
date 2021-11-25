@@ -1,0 +1,33 @@
+<div class="pt-3 px-3 card-pedido">
+    <span class="titulo-pedido">Pedido: {0}</span>
+    <div class="my-1">
+        <span>realizado em:</span>
+        <div class="destaque">{8} {9}</div>
+    </div>
+    <div class="mb-3" id="status">
+        <span>status: </span><span class="destaque me-1">{2}</span>
+        <div class="status-{1}"></div>
+    </div>
+    <div>
+        <span>cliente:</span>
+        <span class="destaque">{3} {4}</span>
+    </div>
+    <div>
+        <span>endereço:</span>
+        <span class="destaque">{5}, {6}</span>
+    </div>
+    <div>
+        <span>telefone:</span>
+        <span class="destaque">{7}</span>
+    </div>
+    <hr style="border: 1px solid #C4C4C4;">
+    {10}
+    <div id="total" class="d-flex justify-content-end my-3">
+        <span>total:</span>
+        <span class="ms-2 destaque">R${11}</span>
+    </div>
+    <div class="botoes-pedido d-flex justify-content-between mt-2 mb-4">
+        <button class="botao-cancelar" onclick="cancelaPedido('{0}');">cancelar</button>
+        <button class="botao-finalizar" onclick="finalizaPedido('{0}');">finalizar</button>
+    </div>
+</div>
