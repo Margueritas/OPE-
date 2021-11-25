@@ -73,7 +73,8 @@ def clientes_pagina_editar(request:HttpRequest, pk) -> HttpResponse:
             'sidebar': 'sidebar.html'})
 
 def clientes_dados(request:HttpRequest, pk) -> HttpResponse:
-    cliente = load_cliente_data(pk, None)
+    aux = Usuario.objects.get(id=pk)
+    cliente = load_cliente_data(aux, None)
     return HttpResponse(json.dumps(cliente))
 
 def clientes_cadastro(request:HttpRequest) -> HttpResponse:
@@ -232,10 +233,11 @@ def pedidos_novo(request:HttpRequest) -> HttpResponse:
     status_preparacao = "Em preparação"
     forma_pagamento = "Crédito"
     obs=''
-    pedido = Pedido.objects.create(obs=obs, data=datetime.datetime.now(),\
+    pedido = Pedido.objects.create(obs=obs, data=datetime.now(),\
+            hora=datetime.now(),\
             idstatus = StatusPedido.objects.filter(status=status_preparacao).get(),\
             idformapagamento = FormaPagamento.objects.filter(forma=forma_pagamento).get(),\
-            idcliente = id_cliente)
+            idcliente = Usuario.objects.get(id=id_cliente))
     id_pedido = pedido.pk
     index = 1
     for item in _['itens']:
@@ -249,10 +251,10 @@ def pedidos_novo(request:HttpRequest) -> HttpResponse:
     clear_carrinho_dict(response)
     return response
 
-def pedidos_carregar(request:HttpRequest) -> HttpResponse:
-    status_preparacao = "Em preparação"
-    pedidos = Pedido.objects.filter(Q(data=datetime.now().date()) |\
-        Q(idstatus = StatusPedido.objects.filter(status=status_preparacao).get())).all()
+def pedidos_carregar(request:HttpRequest, pk:int) -> HttpResponse:
+    # status_preparacao = StatusPedido.objects.get(pk=pk)
+    pedidos = Pedido.objects.filter(Q(data=datetime.now().date()) &\
+        Q(idstatus = StatusPedido.objects.filter(id=pk).get())).all()
     pedidos_tela = []
     for pedido in pedidos:
         cliente = load_cliente_data(pedido.idcliente, None)
@@ -260,7 +262,9 @@ def pedidos_carregar(request:HttpRequest) -> HttpResponse:
             'cliente': cliente,
             'id': pedido.pk,
             'status': pedido.idstatus.pk,
-            'status_texto': pedido.idstatus.status
+            'status_texto': pedido.idstatus.status,
+            'data': pedido.data.isoformat(),
+            'hora': pedido.hora.isoformat(),
         }
         pedido_atual['produtos'] = []
         pedido_produtos = ProdutoPedido.objects.filter(idpedido=pedido.pk).all()
@@ -275,21 +279,70 @@ def pedidos_carregar(request:HttpRequest) -> HttpResponse:
         pedidos_tela.append(pedido_atual)
     return HttpResponse(json.dumps(pedidos_tela))
 
-def pedidos_finalizar(request:HttpRequest, pk:int) -> HttpResponse:
+def pedidos_busca(request:HttpRequest) -> HttpResponse:
+    status_selecionado = request.GET.get("status")
+    pesquisa = request.GET.get("pesquisa")
+    ordenacao = request.GET.get("ordem")
+    pedidos = Pedido.objects.filter(Q(data=datetime.now().date()) &\
+        Q(idstatus = StatusPedido.objects.filter(id=status_selecionado).get())).all()
+    if pesquisa and pesquisa != 'undefined':
+        pedidos = pedidos.filter(Q(idcliente__nome__icontains=pesquisa) | Q(idcliente__sobrenome__icontains=pesquisa))
+    if ordenacao is not None:
+        if ordenacao == 'recentes' or ordenacao == 'undefined':
+            pedidos = pedidos.order_by('-data', '-hora')
+        elif ordenacao == 'antigos':
+            pedidos = pedidos.order_by('data', 'hora')
+    pedidos_tela = []
+    for pedido in pedidos:
+        cliente = load_cliente_data(pedido.idcliente, None)
+        pedido_atual = {
+            'cliente': cliente,
+            'id': pedido.pk,
+            'status': pedido.idstatus.pk,
+            'status_texto': pedido.idstatus.status,
+            'data': pedido.data.isoformat(),
+            'hora': pedido.hora.isoformat(),
+        }
+        pedido_atual['produtos'] = []
+        pedido_produtos = ProdutoPedido.objects.filter(idpedido=pedido.pk).all()
+        for pedido_produto in pedido_produtos:
+            produto = Produto.objects.filter(pk=pedido_produto.idproduto.pk).get()
+            produto_lista = {
+                'nome': produto.nome,
+                'preco': pedido_produto.preco,
+                'quantidade': pedido_produto.quantidade
+            }
+            pedido_atual['produtos'].append(produto_lista)
+        pedidos_tela.append(pedido_atual)
+    return HttpResponse(json.dumps(pedidos_tela))
+
+def pedidos_finalizar(request:HttpRequest) -> HttpResponse:
+    status_pagina = request.GET.get("status")
+    pk = request.GET.get("idpedido")
     status_preparacao = "Finalizado"
     Pedido.objects.filter(pk=pk).update(
         idstatus = StatusPedido.objects.filter(status=status_preparacao).get()
     )
-    return pedidos_carregar(request)
+    return pedidos_carregar(request, status_pagina)
 
-def pedidos_cancelar(request:HttpRequest, pk:int) -> HttpResponse:
+def pedidos_cancelar(request:HttpRequest) -> HttpResponse:
+    status_pagina = request.GET.get("status")
+    pk = request.GET.get("idpedido")
     status_preparacao = "Cancelado"
     Pedido.objects.filter(pk=pk).update(
         idstatus = StatusPedido.objects.filter(status=status_preparacao).get()
     )
-    return pedidos_carregar(request)
+    return pedidos_carregar(request, status_pagina)
 
 def pedidos(request:HttpRequest) -> HttpResponse:
+    statusPedidos = StatusPedido.objects.all()
+    status_selecionado = request.GET.get("status")
+    status_ativo: StatusPedido
+    if not status_selecionado:
+        status_ativo = StatusPedido.objects.get(status="Em preparação")
+    else:
+        status_ativo = StatusPedido.objects.get(id=status_selecionado)
     return render(request, 'painel.html', context={\
         'view': 'pedidos.html', 'title': 'Pedidos', 'auxiliar': 'blank.html',\
-            'sidebar': 'sidebar.html'})
+        'sidebar': 'sidebar.html', 'statusPedidos': statusPedidos,\
+        'statusAtivo': status_ativo})
