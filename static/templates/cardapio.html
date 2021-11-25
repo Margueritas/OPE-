@@ -100,4 +100,26 @@ data-bs-backdrop="static" data-bs-keyboard="false">
   </div>
 </div>
 </div>
+
+
+<div class="modal" tabindex="-1" id="modalObservacoes"
+data-bs-backdrop="static" data-bs-keyboard="false">
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title">Observações</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+      <textarea id="observacoes-pedido" rows="4" cols="60"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
+        onclick="carregaObservacoes($('#observacoes-pedido'));">Ok</button>
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+        onclick="ignoraObservacoes();">Cancelar</button>
+    </div>
+  </div>
+</div>
+</div>
 {% endblock%}

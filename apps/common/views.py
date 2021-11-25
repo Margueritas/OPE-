@@ -232,7 +232,7 @@ def pedidos_novo(request:HttpRequest) -> HttpResponse:
     id_cliente = _['cliente']
     status_preparacao = "Em preparação"
     forma_pagamento = "Crédito"
-    obs=''
+    obs=_['observacoes']
     pedido = Pedido.objects.create(obs=obs, data=datetime.now(),\
             hora=datetime.now(),\
             idstatus = StatusPedido.objects.filter(status=status_preparacao).get(),\
@@ -265,6 +265,7 @@ def pedidos_carregar(request:HttpRequest, pk:int) -> HttpResponse:
             'status_texto': pedido.idstatus.status,
             'data': pedido.data.isoformat(),
             'hora': pedido.hora.isoformat(),
+            'obs': pedido.obs
         }
         pedido_atual['produtos'] = []
         pedido_produtos = ProdutoPedido.objects.filter(idpedido=pedido.pk).all()
@@ -302,6 +303,7 @@ def pedidos_busca(request:HttpRequest) -> HttpResponse:
             'status_texto': pedido.idstatus.status,
             'data': pedido.data.isoformat(),
             'hora': pedido.hora.isoformat(),
+            'obs': pedido.obs
         }
         pedido_atual['produtos'] = []
         pedido_produtos = ProdutoPedido.objects.filter(idpedido=pedido.pk).all()

@@ -70,7 +70,22 @@ function hideCarregando() {
 
 async function confirmarPedido() {
   async function doConfirmarPedido() {
+    var observacoes = '';
+    if(confirm('Deseja colocar observações no pedido?')) {
+      var promiseObservacoes = new Promise(function(res, rej) {
+        window.carregaObservacoes = function(textarea) {
+          res(textarea.val());
+        };
+        window.ignoraObservacoes = function() {
+          res('');
+        };
+      });
+      $('#modalObservacoes').modal('show');
+      observacoes = await promiseObservacoes;
+    }
     showCarregando();
+    pedidoData.observacoes = observacoes;
+    alert(JSON.stringify(pedidoData));
     var idPedidoNovo = await ajaxPromise('/pedidos/novo', pedidoData);
     if(isNaN(parseInt(idPedidoNovo))) {
       hideCarregando();

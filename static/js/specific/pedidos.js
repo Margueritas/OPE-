@@ -17,7 +17,7 @@ function aplicaItens(itens) {
       let htmlProdInt = '';
       let lastProd = null;
       let total = 0;
-      cliente = item.cliente[0];
+      let cliente = item.cliente[0];
       for (let produto of item.produtos) {
           total += produto.preco;
           if (produto.quantidade == 0.5) {
@@ -64,47 +64,50 @@ function aplicaItens(itens) {
         item.data.split("-").reverse().join("/"),
         item.hora.split('.')[0],
         htmlProdInt,
-        asMonetary(total)
+        asMonetary(total),
+        item.obs
       );
     }
     containerItens.html(html);
 }
 
 function trocaStatus(statusSelecionado, ordem, pesquisa) {
-    $('#seletor-status-' + statusAtivo).removeClass(CLASSE_CSS_SELECIONADO);
-    $('#seletor-status-' + statusSelecionado).addClass(CLASSE_CSS_SELECIONADO);
-    let termoPesquisa = '';
-    statusAtivo = statusSelecionado;
-    containerItens.html(CARREGANDO);
-    $.ajax({
-      url: '/pedidos/busca?status=' + statusAtivo + '&pesquisa=' + pesquisa+ '&ordem='+ordem,
-      method: 'GET'
-    }).done(function(response) {
-        if (ordem == undefined) $("#select-filtro-pedido").val('recentes');
-      aplicaItens(JSON.parse(response));
-      if (statusAtivo != 1) {
-            $(".botoes-pedido").addClass('d-none');
-      }
-      else {
-        $(".botoes-pedido").removeClass('d-none');
-      }
-    });
+  $('#seletor-status-' + statusAtivo).removeClass(CLASSE_CSS_SELECIONADO);
+  $('#seletor-status-' + statusSelecionado).addClass(CLASSE_CSS_SELECIONADO);
+  let termoPesquisa = '';
+  statusAtivo = statusSelecionado;
+  containerItens.html(CARREGANDO);
+  $.ajax({
+    url: '/pedidos/busca?status=' + statusAtivo + '&pesquisa=' + pesquisa+ '&ordem='+ordem,
+    method: 'GET'
+  }).done(function(response) {
+    if (ordem == undefined) {
+      $("#select-filtro-pedido").val('recentes');
+    }
+    aplicaItens(JSON.parse(response));
+    if (statusAtivo != 1) {
+      $(".botoes-pedido").addClass('d-none');
+    }
+    else {
+      $(".botoes-pedido").removeClass('d-none');
+    }
+  });
 }
 
 function finalizaPedido(idPedido) {
-    $.ajax({
-        url: '/pedidos/finalizar?idpedido=' + idPedido + '&status=' + statusAtivo,
-        method: 'GET'
-      }).done(function(response) {
-        aplicaItens(JSON.parse(response));
-      });
+  $.ajax({
+    url: '/pedidos/finalizar?idpedido=' + idPedido + '&status=' + statusAtivo,
+    method: 'GET'
+  }).done(function(response) {
+    aplicaItens(JSON.parse(response));
+  });
 }
 
 function cancelaPedido(idPedido) {
-    $.ajax({
-        url: '/pedidos/cancelar?idpedido=' + idPedido + '&status=' + statusAtivo ,
-        method: 'GET'
-      }).done(function(response) {
-        aplicaItens(JSON.parse(response));
-      });
+  $.ajax({
+    url: '/pedidos/cancelar?idpedido=' + idPedido + '&status=' + statusAtivo ,
+    method: 'GET'
+  }).done(function(response) {
+    aplicaItens(JSON.parse(response));
+  });
 }
