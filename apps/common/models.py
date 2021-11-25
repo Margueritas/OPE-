@@ -93,10 +93,11 @@ class StatusPedido(models.Model):
         db_table = 'statuspedido'
 
 class Pedido(models.Model):
-    idcliente = models.IntegerField()
+    idcliente = models.ForeignKey(Usuario, models.DO_NOTHING, db_column='idcliente')
     idformapagamento = models.ForeignKey(FormaPagamento, models.DO_NOTHING, db_column='idformapagamento')
     idstatus = models.ForeignKey(StatusPedido, models.DO_NOTHING, db_column='idstatus')
     data = models.DateField()
+    hora = models.TimeField()
     obs = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
