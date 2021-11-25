@@ -69,14 +69,28 @@ function hideCarregando() {
 }
 
 async function confirmarPedido() {
-  showCarregando();
-  var idPedidoNovo = await ajaxPromise('/pedidos/novo', pedidoData);
-  if(isNaN(parseInt(idPedidoNovo))) {
-    hideCarregando();
-    alert('Ocorreu um erro ao confirmar o pedido.');
-    return;
+  console.log(pedidoData);
+  for (let item of pedidoData.itens) {
+    if (item.produtos.length > 1) {
+      let metadeAnt = null;
+      for (let metade of item.produtos) {
+        if (metadeAnt == null) {metadeAnt = metade.id_tipo}
+        else {if (metadeAnt != metade.id_tipo) {
+          if(confirm("Sabores doce e salgado na mesma pizza. Continuar?")){
+            showCarregando();
+            var idPedidoNovo = await ajaxPromise('/pedidos/novo', pedidoData);
+            if(isNaN(parseInt(idPedidoNovo))) {
+              hideCarregando();
+              alert('Ocorreu um erro ao confirmar o pedido.');
+              return;
+            }
+            document.location.replace('/pedidos');
+            }
+          }
+        }
+      }
+    }
   }
-  document.location.replace('/pedidos');
 }
 
 function carregaCarrinho(jQueryAjaxObj) {
@@ -132,7 +146,8 @@ function carregaCarrinho(jQueryAjaxObj) {
         var isMeio = false;
         for(produtoItem of item.produtos) {
           var produtoData = {
-            id_produto: produtoItem.id_produto
+            id_produto: produtoItem.id_produto,
+            id_tipo: '',
           };
           var produto = produtos['' + produtoItem.id_produto];
           var quantidade = '';
@@ -145,6 +160,7 @@ function carregaCarrinho(jQueryAjaxObj) {
             precoTotal += produto.fields.preco;
             produtoData.preco = produto.fields.preco;
           }
+          produtoData.id_tipo = produto.fields.idtipo;
           produtoData.quantidade = produtoItem.quantidade;
           produtosHtml += ITEM_CARRINHO_PRODUTO_TEMPLATE.format(
             quantidade,
