@@ -32,7 +32,7 @@
     margin-bottom:20px;
 }
 
-#confirmar-pedido:disabled {
+#confirmar-pedido.invalido {
     background: #3d3c3c;
     cursor: not-allowed;
 }

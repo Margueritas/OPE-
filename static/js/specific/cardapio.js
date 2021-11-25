@@ -69,6 +69,10 @@ function hideCarregando() {
 }
 
 async function confirmarPedido() {
+  if($('#confirmar-pedido').hasClass('invalido')) {
+    alert($('#confirmar-pedido').data('msg-invalido'));
+    return;
+  }
   console.log(pedidoData);
   for (let item of pedidoData.itens) {
     if (item.produtos.length > 1) {
@@ -94,8 +98,11 @@ async function confirmarPedido() {
 }
 
 function carregaCarrinho(jQueryAjaxObj) {
+    var mensagemValidacao = 'Pedido não pode ser concluído devido aos' +
+      ' seguintes erros:\n\n';
     var valido = true;
     if(clienteSelecionado == null) {
+      mensagemValidacao += '- Necessário selecionar cliente\n';
       valido = false;
       return false;
     } else {
@@ -170,6 +177,10 @@ function carregaCarrinho(jQueryAjaxObj) {
           itemData.produtos.push(produtoData);
         }
         if(isMeio && produtoIndex < 2) {
+          mensagemValidacao += '- Pizza '
+            + (pedidoData.itens.length + 1) 
+            + ' incompleta (pizza de dois sabores'
+            + ' faltando segundo sabor)\n';
           valido = false;
         }
         valorTotalCarrinho += precoTotal;
@@ -188,24 +199,17 @@ function carregaCarrinho(jQueryAjaxObj) {
         asMonetary(valorTotalCarrinho)
       );
       $('#carrinho-itens').html(htmlTotal);
-      if(hasItens) {
-        await refreshCarrinho();
-        console.log("refreshCarrinho");
-        if(!cartStatus) {
-          // await toggleCarrinho();
-        } else {
-          // await toggleCarrinho();
-          // await toggleCarrinho();
-        }
-      } else {
-        await refreshCarrinho();
-        console.log("refreshCarrinho");
+      await refreshCarrinho();
+      console.log("refreshCarrinho");
+      if(!hasItens) {
+        mensagemValidacao += '- Não existem itens no carrinho.';
         valido = false;
       }
       if(!valido) {
-        $('#confirmar-pedido').attr('disabled', 'disabled');
+        $('#confirmar-pedido').addClass('invalido');
+        $('#confirmar-pedido').data('msg-invalido', mensagemValidacao);
       } else {
-        $('#confirmar-pedido').removeAttr('disabled');
+        $('#confirmar-pedido').removeClass('invalido');
       }
       var labels = $('.label-meia').filter(function(ignored, e) {
         return e.innerHTML == '';
@@ -342,10 +346,10 @@ $(document).ready(function() {
         campos.imagem,
         campos.nome,
         campos.descricao,
-        campos.preco,
+        asMonetary(campos.preco),
         item.pk,
         campos.idtipo,
-        campos.preco_meio,
+        asMonetary(campos.preco_meio),
       );
       
     }
