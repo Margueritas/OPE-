@@ -77,7 +77,7 @@ margin-bottom: 20px;
 
 .app-card{
     display: grid;
-    grid-template-columns: 70% 30%;
+    grid-template-columns: 80% 20%;
     /* flex-direction: row; */
     /* justify-content: start; */
     height: 85px;
@@ -282,7 +282,6 @@ li.tipositem a.selecionado {
     align-items: center;
     justify-content: center;
     justify-content: space-around;
-
 }
 
 .card-pizza{

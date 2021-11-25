@@ -1,12 +1,228 @@
 {% block content %}
 {% load static %}
+<style>
+#select-filtro-pedido {
+    width: 200px;
+    background-color: transparent;
+    height: 50px;
+    border: 0;
+}
+#botao-pesquisar-pedidos {
+    width: 300px;
+    height: 50px;
+    border-radius: 7px;
+    border: 1px solid #999;
+    outline-color: #C84B31;
+    padding-top: 0px;
+    padding-bottom: 11px;
+    padding-left: 8px;
+    margin-top: 0;
+    display: inline-flex;
+    vertical-align: middle;
+}
 
+#icone-busca-pedido{
+    margin-top:13px;
+    margin-left: 5px;
+}
+
+#pedido-busca {
+    width: 85%;
+    height: 40px;
+    border: none;
+    outline: none;
+    margin: 0;
+    margin-top: 4px;
+    padding: 0;
+    padding-right: 15px;
+    text-align: center;
+    font-size: medium;
+}
+
+.opcoes-pedido {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    justify-content: space-around;
+    height: 60px;
+}
+
+ul.tipos {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+    margin-left: -50px;
+    margin-top: 20px;
+    margin-bottom: 50px;
+}
+
+li.tipositem {
+    list-style-type: none;
+    /* font-weight: bold; */
+    cursor: pointer;
+    justify-items: center;
+    display: grid;
+}
+
+.item {
+    font-size: 16px;
+}
+
+.selecionado{
+    font-weight: bold;
+}
+
+.ativo {
+    border-bottom: 3px solid #C84B31;
+    opacity: 100%;
+    margin-top: 0px;
+    width: 53px;
+}
+
+.card-pedido {
+    width: 280px;
+    background: #FAFAFA;
+    box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.06);
+}
+.titulo-pedido {
+    font-style: normal;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 44px;
+    letter-spacing: -0.64px;
+    color: #000000;
+}
+
+.status-1, .status-2, .status-3 {
+    position:relative;
+    top:2px;
+    display:inline-grid;
+    width: 15px;
+    height: 15px;
+}
+
+.status-1 {
+    background-color: #F1AE2F; border-radius: 100%;
+}
+
+.status-2 {
+    background-color: #007A47; border-radius: 100%;
+}
+
+.status-3 {
+    background-color: #B71C1C; border-radius: 100%;
+}
+
+.destaque {
+    font-weight: 500;
+}
+
+.botao-cancelar {
+    width: 110px;
+    height: 55px;
+    background-color: transparent;
+    border: 1px solid #346751;
+    box-sizing: border-box;
+    border-radius: 5px;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 22px;
+    color: #231D19;
+}
+
+.botao-finalizar {
+    width: 110px;
+    height: 55px;
+    background: #C84B31;
+    border: 1px solid #C84B31;
+    box-sizing: border-box;
+    border-radius: 5px;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 22px;
+    color: #FFFFFF;
+}
+</style>
 <script type="text/javascript" src="{% static 'js/specific/pedidos.js' %}"></script>
 <script>
     $(document).ready(async function() {
+        let pedidos = await carregaPedidos();
+
+        var typingTimer;
+        var doneTypingInterval = 500;
+        var $input = $('#pedido-busca');
+
+        var $select = $('#select-filtro-pedido');
+
+        containerItens = $('#pedido-items');
         PEDIDO_TEMPLATE = await ajaxPromise("{% static 'html/pedidos/pedido.html' %}");
-        await carregaPedidos();
+        
+        CARREGANDO = containerItens.html();
+        trocaStatus('{{statusAtivo.pk}}');
+        
+        $("#select-filtro-pedido").on("change", function() {
+            trocaStatus(statusAtivo, this.value, $input.val().trim());
+        })
+        
+        $input.on('keyup', function () {
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(doneTyping, doneTypingInterval);
+        });
+
+        $input.on('keydown', function () {
+            clearTimeout(typingTimer);
+        });
+
+        function doneTyping () {
+            $.ajax({
+                url: '/pedidos/busca?status=' + statusAtivo + '&pesquisa=' + $input.val().trim() + '&ordem='+$("#select-filtro-pedido").val(),
+                method: 'GET',
+            }).done(function(resp){
+                aplicaItens(JSON.parse(resp));
+            });
+        }
     });
 </script>
 
+<div class="row px-3 my-4">
+    <div class="d-flex justify-content-between">
+    <div id="botao-pesquisar-pedidos">
+        <span id="icone-busca-pedido" class='material-icons' style="cursor: default">search</span>
+        <input id="pedido-busca" type="search" name="" placeholder="pesquisar pedidos">
+    </div>
+    <div id="filtrar-pedidos">
+        <span class="destaque">Filtrar por:</span>
+        <select id="select-filtro-pedido">
+            <option value="recentes">mais recente</option>
+            <option value="antigos">mais antigo</option>
+        </select>
+    </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="opcoes-pedido">
+        <ul class="tipos">
+
+            {% for status in statusPedidos %}
+            <li class="tipositem">
+                <a href="javascript://" onclick="trocaStatus('{{ status.pk }}', $('#select-filtro-pedido').val(),  $('#pedido-busca').val().trim())" id="seletor-status-{{status.pk}}">
+                    {{ status.status }}
+                </a>
+                
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+<div class="row">
+    <div id="container-pedidos">
+        <section class="grid grid-3-columns me-3" id="pedido-items" style="align-items: start;">
+          <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+      </section>
+    </div>
+</div>
 {% endblock%}
