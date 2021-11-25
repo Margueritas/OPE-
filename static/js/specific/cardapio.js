@@ -69,6 +69,16 @@ function hideCarregando() {
 }
 
 async function confirmarPedido() {
+  async function doConfirmarPedido() {
+    showCarregando();
+    var idPedidoNovo = await ajaxPromise('/pedidos/novo', pedidoData);
+    if(isNaN(parseInt(idPedidoNovo))) {
+      hideCarregando();
+      alert('Ocorreu um erro ao confirmar o pedido.');
+      return;
+    }
+    document.location.replace('/pedidos');
+  }
   if($('#confirmar-pedido').hasClass('invalido')) {
     alert($('#confirmar-pedido').data('msg-invalido'));
     return;
@@ -78,23 +88,20 @@ async function confirmarPedido() {
     if (item.produtos.length > 1) {
       let metadeAnt = null;
       for (let metade of item.produtos) {
-        if (metadeAnt == null) {metadeAnt = metade.id_tipo}
-        else {if (metadeAnt != metade.id_tipo) {
-          if(confirm("Sabores doce e salgado na mesma pizza. Continuar?")){
-            showCarregando();
-            var idPedidoNovo = await ajaxPromise('/pedidos/novo', pedidoData);
-            if(isNaN(parseInt(idPedidoNovo))) {
-              hideCarregando();
-              alert('Ocorreu um erro ao confirmar o pedido.');
-              return;
+        if (metadeAnt == null) {
+          metadeAnt = metade.id_tipo
+        } else {
+          if (metadeAnt != metade.id_tipo) {
+            if(confirm("Sabores doce e salgado na mesma pizza. Continuar?")) {
+              await doConfirmarPedido();
             }
-            document.location.replace('/pedidos');
-            }
+            return;
           }
         }
       }
     }
   }
+  await doConfirmarPedido();
 }
 
 function carregaCarrinho(jQueryAjaxObj) {
@@ -221,17 +228,6 @@ function carregaCarrinho(jQueryAjaxObj) {
       }
       hideCarregando();
     });
-}
-
-function asMonetary(value) {
-  var precoSplit = ('' + value).split('.');
-  if(precoSplit.length < 2) {
-    precoSplit.push('0');
-  }
-  if(precoSplit[1].length < 2) {
-    precoSplit[1] = precoSplit[1] + '0';
-  }
-  return precoSplit.join(',');
 }
 
 async function selectCustomer(pk, iniciarCarrinho) {

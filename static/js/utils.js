@@ -43,3 +43,15 @@ function ajaxPromise(url, body) {
     return promise;
   }
   
+  
+
+function asMonetary(value) {
+  var precoSplit = ('' + value).split('.');
+  if(precoSplit.length < 2) {
+    precoSplit.push('0');
+  }
+  if(precoSplit[1].length < 2) {
+    precoSplit[1] = precoSplit[1] + '0';
+  }
+  return precoSplit.join(',');
+}

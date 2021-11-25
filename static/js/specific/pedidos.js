@@ -29,7 +29,7 @@ function aplicaItens(itens) {
             <div class="item d-flex justify-content-between">
             <span class="item-qtd">1/2</span>
             <span class="item-descr">${produto.nome.replace('Pizza de', '')}</span>
-            <span class="destaque">R$${produto.preco}</span>
+            <span class="destaque">R$${asMonetary(produto.preco)}</span>
             </div>`;
 
             if (lastProd != null) {
@@ -46,7 +46,7 @@ function aplicaItens(itens) {
                 <div class="item d-flex justify-content-between my-1">
                 <span class="item-qtd">01</span>
                 <span class="item-descr">${produto.nome.replace('Pizza de', '')}</span>
-                <span class="destaque">R$${produto.preco}</span>
+                <span class="destaque">R$${asMonetary(produto.preco)}</span>
                 </div>
               `;
               lastProd = null;
@@ -64,7 +64,7 @@ function aplicaItens(itens) {
         item.data.split("-").reverse().join("/"),
         item.hora.split('.')[0],
         htmlProdInt,
-        total
+        asMonetary(total)
       );
     }
     containerItens.html(html);
