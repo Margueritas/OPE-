@@ -69,33 +69,62 @@ function hideCarregando() {
 }
 
 async function confirmarPedido() {
+  async function doConfirmarPedido() {
+    var observacoes = '';
+    if(confirm('Deseja colocar observações no pedido?')) {
+      var promiseObservacoes = new Promise(function(res, rej) {
+        window.carregaObservacoes = function(textarea) {
+          res(textarea.val());
+        };
+        window.ignoraObservacoes = function() {
+          res('');
+        };
+      });
+      $('#modalObservacoes').modal('show');
+      observacoes = await promiseObservacoes;
+    }
+    showCarregando();
+    pedidoData.observacoes = observacoes;
+    alert(JSON.stringify(pedidoData));
+    var idPedidoNovo = await ajaxPromise('/pedidos/novo', pedidoData);
+    if(isNaN(parseInt(idPedidoNovo))) {
+      hideCarregando();
+      alert('Ocorreu um erro ao confirmar o pedido.');
+      return;
+    }
+    document.location.replace('/pedidos');
+  }
+  if($('#confirmar-pedido').hasClass('invalido')) {
+    alert($('#confirmar-pedido').data('msg-invalido'));
+    return;
+  }
   console.log(pedidoData);
   for (let item of pedidoData.itens) {
     if (item.produtos.length > 1) {
       let metadeAnt = null;
       for (let metade of item.produtos) {
-        if (metadeAnt == null) {metadeAnt = metade.id_tipo}
-        else {if (metadeAnt != metade.id_tipo) {
-          if(confirm("Sabores doce e salgado na mesma pizza. Continuar?")){
-            showCarregando();
-            var idPedidoNovo = await ajaxPromise('/pedidos/novo', pedidoData);
-            if(isNaN(parseInt(idPedidoNovo))) {
-              hideCarregando();
-              alert('Ocorreu um erro ao confirmar o pedido.');
-              return;
+        if (metadeAnt == null) {
+          metadeAnt = metade.id_tipo
+        } else {
+          if (metadeAnt != metade.id_tipo) {
+            if(confirm("Sabores doce e salgado na mesma pizza. Continuar?")) {
+              await doConfirmarPedido();
             }
-            document.location.replace('/pedidos');
-            }
+            return;
           }
         }
       }
     }
   }
+  await doConfirmarPedido();
 }
 
 function carregaCarrinho(jQueryAjaxObj) {
+    var mensagemValidacao = 'Pedido não pode ser concluído devido aos' +
+      ' seguintes erros:\n\n';
     var valido = true;
     if(clienteSelecionado == null) {
+      mensagemValidacao += '- Necessário selecionar cliente\n';
       valido = false;
       return false;
     } else {
@@ -170,6 +199,10 @@ function carregaCarrinho(jQueryAjaxObj) {
           itemData.produtos.push(produtoData);
         }
         if(isMeio && produtoIndex < 2) {
+          mensagemValidacao += '- Pizza '
+            + (pedidoData.itens.length + 1) 
+            + ' incompleta (pizza de dois sabores'
+            + ' faltando segundo sabor)\n';
           valido = false;
         }
         valorTotalCarrinho += precoTotal;
@@ -188,24 +221,17 @@ function carregaCarrinho(jQueryAjaxObj) {
         asMonetary(valorTotalCarrinho)
       );
       $('#carrinho-itens').html(htmlTotal);
-      if(hasItens) {
-        await refreshCarrinho();
-        console.log("refreshCarrinho");
-        if(!cartStatus) {
-          // await toggleCarrinho();
-        } else {
-          // await toggleCarrinho();
-          // await toggleCarrinho();
-        }
-      } else {
-        await refreshCarrinho();
-        console.log("refreshCarrinho");
+      await refreshCarrinho();
+      console.log("refreshCarrinho");
+      if(!hasItens) {
+        mensagemValidacao += '- Não existem itens no carrinho.';
         valido = false;
       }
       if(!valido) {
-        $('#confirmar-pedido').attr('disabled', 'disabled');
+        $('#confirmar-pedido').addClass('invalido');
+        $('#confirmar-pedido').data('msg-invalido', mensagemValidacao);
       } else {
-        $('#confirmar-pedido').removeAttr('disabled');
+        $('#confirmar-pedido').removeClass('invalido');
       }
       var labels = $('.label-meia').filter(function(ignored, e) {
         return e.innerHTML == '';
@@ -217,17 +243,6 @@ function carregaCarrinho(jQueryAjaxObj) {
       }
       hideCarregando();
     });
-}
-
-function asMonetary(value) {
-  var precoSplit = ('' + value).split('.');
-  if(precoSplit.length < 2) {
-    precoSplit.push('0');
-  }
-  if(precoSplit[1].length < 2) {
-    precoSplit[1] = precoSplit[1] + '0';
-  }
-  return precoSplit.join(',');
 }
 
 async function selectCustomer(pk, iniciarCarrinho) {
@@ -248,15 +263,7 @@ function refreshCarrinho() {
     resolve = res;
   });
 
-  $('#carrinho').css({'display': ''});
-  $('#carrinho').css(
-    {
-      'visibility':'visible',
-      'opacity':'100',
-      'border':'1px solid #34675154',
-      'height':$('#medida').height()+'px',
-      'transition':'opacity 250ms, height 150ms ease-out'
-    });
+  toggleCarrinho();
   resolve('');
   return promise
 }
@@ -269,7 +276,7 @@ function toggleCarrinho() {
   if($('#carrinho').css('height')==='0px'){
     $('#carrinho').css({'display': ''});
     $('#carrinho').css({'visibility':'visible','opacity':'100',
-      'border':'1px solid #34675154','height':$('#medida').height()+'px',
+      'border':'1px solid #34675154','height':$('#medida').height() + 10 +'px',
       'transition':'opacity 250ms, height 150ms ease-out'});
       if ($('#setacarrinho').hasClass('d-none')) 
       {
@@ -342,10 +349,10 @@ $(document).ready(function() {
         campos.imagem,
         campos.nome,
         campos.descricao,
-        campos.preco,
+        asMonetary(campos.preco),
         item.pk,
         campos.idtipo,
-        campos.preco_meio,
+        asMonetary(campos.preco_meio),
       );
       
     }

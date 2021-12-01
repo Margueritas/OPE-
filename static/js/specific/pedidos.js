@@ -17,7 +17,7 @@ function aplicaItens(itens) {
       let htmlProdInt = '';
       let lastProd = null;
       let total = 0;
-      cliente = item.cliente[0];
+      let cliente = item.cliente[0];
       for (let produto of item.produtos) {
           total += produto.preco;
           if (produto.quantidade == 0.5) {
@@ -29,7 +29,7 @@ function aplicaItens(itens) {
             <div class="item d-flex justify-content-between">
             <span class="item-qtd">1/2</span>
             <span class="item-descr">${produto.nome.replace('Pizza de', '')}</span>
-            <span class="destaque">R$${produto.preco}</span>
+            <span class="destaque">R$${asMonetary(produto.preco)}</span>
             </div>`;
 
             if (lastProd != null) {
@@ -46,7 +46,7 @@ function aplicaItens(itens) {
                 <div class="item d-flex justify-content-between my-1">
                 <span class="item-qtd">01</span>
                 <span class="item-descr">${produto.nome.replace('Pizza de', '')}</span>
-                <span class="destaque">R$${produto.preco}</span>
+                <span class="destaque">R$${asMonetary(produto.preco)}</span>
                 </div>
               `;
               lastProd = null;
@@ -64,47 +64,50 @@ function aplicaItens(itens) {
         item.data.split("-").reverse().join("/"),
         item.hora.split('.')[0],
         htmlProdInt,
-        total
+        asMonetary(total),
+        item.obs
       );
     }
     containerItens.html(html);
 }
 
 function trocaStatus(statusSelecionado, ordem, pesquisa) {
-    $('#seletor-status-' + statusAtivo).removeClass(CLASSE_CSS_SELECIONADO);
-    $('#seletor-status-' + statusSelecionado).addClass(CLASSE_CSS_SELECIONADO);
-    let termoPesquisa = '';
-    statusAtivo = statusSelecionado;
-    containerItens.html(CARREGANDO);
-    $.ajax({
-      url: '/pedidos/busca?status=' + statusAtivo + '&pesquisa=' + pesquisa+ '&ordem='+ordem,
-      method: 'GET'
-    }).done(function(response) {
-        if (ordem == undefined) $("#select-filtro-pedido").val('recentes');
-      aplicaItens(JSON.parse(response));
-      if (statusAtivo != 1) {
-            $(".botoes-pedido").addClass('d-none');
-      }
-      else {
-        $(".botoes-pedido").removeClass('d-none');
-      }
-    });
+  $('#seletor-status-' + statusAtivo).removeClass(CLASSE_CSS_SELECIONADO);
+  $('#seletor-status-' + statusSelecionado).addClass(CLASSE_CSS_SELECIONADO);
+  let termoPesquisa = '';
+  statusAtivo = statusSelecionado;
+  containerItens.html(CARREGANDO);
+  $.ajax({
+    url: '/pedidos/busca?status=' + statusAtivo + '&pesquisa=' + pesquisa+ '&ordem='+ordem,
+    method: 'GET'
+  }).done(function(response) {
+    if (ordem == undefined) {
+      $("#select-filtro-pedido").val('recentes');
+    }
+    aplicaItens(JSON.parse(response));
+    if (statusAtivo != 1) {
+      $(".botoes-pedido").addClass('d-none');
+    }
+    else {
+      $(".botoes-pedido").removeClass('d-none');
+    }
+  });
 }
 
 function finalizaPedido(idPedido) {
-    $.ajax({
-        url: '/pedidos/finalizar?idpedido=' + idPedido + '&status=' + statusAtivo,
-        method: 'GET'
-      }).done(function(response) {
-        aplicaItens(JSON.parse(response));
-      });
+  $.ajax({
+    url: '/pedidos/finalizar?idpedido=' + idPedido + '&status=' + statusAtivo,
+    method: 'GET'
+  }).done(function(response) {
+    aplicaItens(JSON.parse(response));
+  });
 }
 
 function cancelaPedido(idPedido) {
-    $.ajax({
-        url: '/pedidos/cancelar?idpedido=' + idPedido + '&status=' + statusAtivo ,
-        method: 'GET'
-      }).done(function(response) {
-        aplicaItens(JSON.parse(response));
-      });
+  $.ajax({
+    url: '/pedidos/cancelar?idpedido=' + idPedido + '&status=' + statusAtivo ,
+    method: 'GET'
+  }).done(function(response) {
+    aplicaItens(JSON.parse(response));
+  });
 }

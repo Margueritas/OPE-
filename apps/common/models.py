@@ -98,7 +98,7 @@ class Pedido(models.Model):
     idstatus = models.ForeignKey(StatusPedido, models.DO_NOTHING, db_column='idstatus')
     data = models.DateField()
     hora = models.TimeField()
-    obs = models.CharField(max_length=255, blank=True, null=True)
+    obs = models.CharField(max_length=255, blank=True, null=True, db_column='obs')
 
     class Meta:
         managed = False

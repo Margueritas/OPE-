@@ -10,7 +10,6 @@
     top: 87px;
     right: 25px;
     background-color: white;
-    border: 0px solid #34675154;
 }
 
 #total {
@@ -26,13 +25,27 @@
     font-weight: bold;
 }   
 
-#medida {
-    display: table;
-    visibility: visible;
-    margin-bottom:20px;
+@media screen and (-webkit-min-device-pixel-ratio:0)
+and (min-resolution:.001dpcm) {
+    #medida {
+        display: table;
+        visibility: visible;
+        margin-bottom:20px;
+        background-color: white;
+        width: 348px;
+    }
 }
 
-#confirmar-pedido:disabled {
+@-moz-document url-prefix() {
+    #medida {
+        display: table;
+        visibility: visible;
+        margin-bottom:20px;
+        background-color: transparent;
+    }
+}
+
+#confirmar-pedido.invalido {
     background: #3d3c3c;
     cursor: not-allowed;
 }
