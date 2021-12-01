@@ -113,10 +113,6 @@ $(document).ready(function() {
         }
     });
 
-    // $("#cep").blur(function() {
-    //     envia_cep($(this).val())
-    // });
-
     const mascaraTelefone = (valor) => {
         valor = valor.replace(/\D/g, "")
         valor = valor.replace(/^(\d{2})(\d)/g, "($1) $2")
@@ -184,33 +180,9 @@ $(document).ready(function() {
         event.preventDefault();
     });
 });
-
-// var myModalEl = document.getElementById('modal')
-// myModalEl.addEventListener('hidden.bs.modal', function (event) {
-//   alert('fechou modal');
-// })
-
-    
 </script>
 
 <div class="modal" tabindex="-1" id="modalCadastroSucesso" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-            <h5 class="modal-title">Sucesso</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-            <p>Cliente inserido com sucesso!</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Ok</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal" tabindex="-1" id="modalCadastroDuplicado" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
