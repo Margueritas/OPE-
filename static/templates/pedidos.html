@@ -180,6 +180,12 @@ li.tipositem {
                 method: 'GET',
             }).done(function(resp){
                 aplicaItens(JSON.parse(resp));
+                if (statusAtivo != 1) {
+                    $(".botoes-pedido").addClass('d-none');
+                }
+                else {
+                    $(".botoes-pedido").removeClass('d-none');
+                }
             });
         }
     });
