@@ -263,15 +263,7 @@ function refreshCarrinho() {
     resolve = res;
   });
 
-  $('#carrinho').css({'display': ''});
-  $('#carrinho').css(
-    {
-      'visibility':'visible',
-      'opacity':'100',
-      'border':'1px solid #34675154',
-      'height':$('#medida').height()+'px',
-      'transition':'opacity 250ms, height 150ms ease-out'
-    });
+  toggleCarrinho();
   resolve('');
   return promise
 }
@@ -284,7 +276,7 @@ function toggleCarrinho() {
   if($('#carrinho').css('height')==='0px'){
     $('#carrinho').css({'display': ''});
     $('#carrinho').css({'visibility':'visible','opacity':'100',
-      'border':'1px solid #34675154','height':$('#medida').height()+'px',
+      'border':'1px solid #34675154','height':$('#medida').height() + 10 +'px',
       'transition':'opacity 250ms, height 150ms ease-out'});
       if ($('#setacarrinho').hasClass('d-none')) 
       {
