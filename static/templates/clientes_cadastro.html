@@ -4,7 +4,7 @@
         {% csrf_token %}
         <div class="divformgroup">
             <label for="nome" class="labelcadastro">Nome</label>
-            <input type="text" name="nome" id="nome" class="textinput">
+            <input type="text" name="nome" id="nome" class="textinput" required>
         </div>
         <div class="divformgroup">
             <label for="sobrenome" class="labelcadastro">Sobrenome</label>
@@ -17,15 +17,15 @@
         </div>
         <div class="divformgroup">
             <label for="cep" class="labelcadastro">Cep</label>
-            <input type="text" name="cep" id="cep" class="textinput">
+            <input type="text" name="cep" id="cep" class="textinput" required>
         </div>
         <div class="divformgroup">
             <label for="rua" class="labelcadastro">Endereco</label>
-            <input type="text" name="rua" id="rua" class="textinput">
+            <input type="text" name="rua" id="rua" class="textinput" required>
         </div>
         <div class="divformgroup">
             <label for="numero" class="labelcadastro">Numero</label>
-            <input type="text" name="numero" id="numero" class="textinput">
+            <input type="text" name="numero" id="numero" class="textinput" required>
         </div>
         <div class="divformgroup">
             <label for="complemento" class="labelcadastro">Complemento</label>
@@ -138,10 +138,48 @@ $(document).ready(function() {
         url: '/clientes/inserir',
         data: formcontent,
         method: 'POST',
+        beforeSend: function(){
+            $('#telefone').removeClass("border-bottom border-danger");
+            $('#nome').removeClass("border-bottom border-danger");
+            $('#cep').removeClass("border-bottom border-danger");
+            $('#rua').removeClass("border-bottom border-danger");
+            $('#numero').removeClass("border-bottom border-danger");
+            let error = []
+            if ($("#telefone").val().trim().length==0) {
+                alert('Preencha o telefone do cliente!');
+                error = [...error, "telefone"];
+            }
+            if ($("#nome").val().trim().length==0) {
+                alert('Preencha o nome do cliente!');
+                error = [...error, "nome"];
+            }
+            if ($("#cep").val().trim().length==0) {
+                alert('Preencha o cep do cliente!');
+                error = [...error, "cep"];
+            }
+            if ($("#rua").val().trim().length==0) {
+                alert('Preencha o endereco do cliente!');
+                error = [...error, "rua"];
+            }
+            if ($("#numero").val().trim().length==0) {
+                alert('Preencha o número do endereço do cliente!');
+                error = [...error, "numero"];
+            }
+            if (error.length > 0) {
+                $.each(error, function(index, value){
+                    $(`#${value}`).addClass("border-bottom border-danger");
+                })
+                return false;
+            };
+        }
         }).done(function(response) {
             if(response.status === 'sucesso') {
                 $("#modalCadastroSucesso").modal('show');
             };
+            if(response.status === 'duplicado') {
+                alert('Já existe um usuário cadastrado com este telefone!');
+                $('#telefone').addClass("border-bottom border-danger");
+            }
         });
         event.preventDefault();
     });
@@ -156,6 +194,23 @@ $(document).ready(function() {
 </script>
 
 <div class="modal" tabindex="-1" id="modalCadastroSucesso" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title">Sucesso</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            <p>Cliente inserido com sucesso!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" tabindex="-1" id="modalCadastroDuplicado" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">

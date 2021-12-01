@@ -153,6 +153,9 @@ def carrinho_carregar(request:HttpRequest) -> HttpResponse:
 
 def clientes_inserir(request:HttpRequest) -> HttpResponse:
     _ = request.POST
+    busca_duplicado = Usuario.objects.filter(telefone=_['telefone'])
+    if len(busca_duplicado) > 0:
+        return JsonResponse({'status':'duplicado'})
     try:
         endereco = Endereco.objects.create(
             logradouro = _['rua'],
@@ -177,6 +180,9 @@ def clientes_inserir(request:HttpRequest) -> HttpResponse:
 
 def clientes_editar(request:HttpRequest) -> HttpResponse:
     _ = request.POST
+    busca_duplicado = Usuario.objects.filter(telefone=_['telefone']).exclude(id=_['pk'])
+    if len(busca_duplicado) > 0:
+        return JsonResponse({'status':'duplicado'})
     try:
         Usuario.objects.filter(id=_['pk']).update(
             nome = _['nome'],
