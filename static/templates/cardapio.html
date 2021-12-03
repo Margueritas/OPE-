@@ -135,11 +135,15 @@ data-bs-backdrop="static" data-bs-keyboard="false">
       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
     <div class="modal-body">
-      <textarea id="observacoes-pedido" rows="4" cols="60"></textarea>
+      <div class="form-floating">
+        <textarea class="form-control" placeholder="Insira observações ao pedido" id="observacoes-pedido" style="height: 100px"></textarea>
+        <label for="observacoes-pedido">Observações</label>
+      </div>
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
-        onclick="carregaObservacoes($('#observacoes-pedido'));">Ok</button>
+      <button type="button" class="btn" data-bs-dismiss="modal"
+        onclick="carregaObservacoes($('#observacoes-pedido'));"
+        style="background-color: #C84B31; color: white; font-weight: bold;">Ok</button>
       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
         onclick="ignoraObservacoes();">Cancelar</button>
     </div>

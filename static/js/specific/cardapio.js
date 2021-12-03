@@ -86,7 +86,6 @@ async function confirmarPedido() {
     }
     showCarregando();
     pedidoData.observacoes = observacoes;
-    alert(JSON.stringify(pedidoData));
     var idPedidoNovo = await ajaxPromise('/pedidos/novo', pedidoData);
     if(isNaN(parseInt(idPedidoNovo))) {
       hideCarregando();
@@ -282,17 +281,20 @@ function toggleCarrinho(fake=false) {
     resolve = res;
   });
 
+  $("#carrinho-notificacao").html(carrinho.length);
+
   if (fake === true) {
+    $('#carrinho').css({'height':$('#medida').height() + 10 +'px'});
+    if(hasItens & $('#carrinho').css('visibility')!='visible') {
+      $("#carrinho-notificacao").removeClass("d-none");
+    }
     resolve('')
     return promise
   }
-  
-  if (carrinho.length > 0) $("#carrinho-notificacao").html(carrinho.length);
 
-  if($('#carrinho').css('height')==='0px'){
+  if($('#carrinho').css('visibility')==='collapse'){
     if(hasItens) {
-      $("#carrinho-notificacao").toggleClass("d-none");
-      console.log(hasItens)
+      $("#carrinho-notificacao").removeClass().addClass("d-none");
     }
     $('#carrinho').css({'display': ''});
     $('#carrinho').css({'visibility':'visible','opacity':'100',
@@ -304,9 +306,10 @@ function toggleCarrinho(fake=false) {
       }
       cartStatus = true;
       resolve('');
-  } else {
+  } 
+  else {
     if(hasItens) {
-      $("#carrinho-notificacao").toggleClass("d-none");
+      $("#carrinho-notificacao").removeClass("d-none");
     }
     $('#carrinho').css({'opacity':'0','border':'1px solid #white',
       'height':'0px','transition':'opacity 250ms, height 150ms ease-in, border-color 250ms ease'});
