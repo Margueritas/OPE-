@@ -3,6 +3,7 @@ var itemSelecionado = '';
 var clienteSelecionado = null;
 var tipoAtivo = null;
 var cartStatus = false;
+var hasItens = false;
 var produtos = {};
 var pedidoData = null;
 
@@ -149,7 +150,7 @@ function carregaCarrinho(jQueryAjaxObj) {
       }
       var htmlTotal = '';
       var valorTotalCarrinho = 0;
-      var hasItens = false;
+      
       if(clienteSelecionado != null) {
         pedidoData = {
           cliente: clienteSelecionado.pk,
@@ -160,11 +161,18 @@ function carregaCarrinho(jQueryAjaxObj) {
           itens: []
         };
       }
+      if (carrinho.length === 0) {
+        hasItens = false;
+        $("#carrinho-notificacao").addClass('d-none');
+      }
       for(item of carrinho) {
         var itemData = {
           produtos: []
         }
         hasItens = true;
+        if($('#carrinho').css('height')==='0px'){
+          $("#carrinho-notificacao").removeClass('d-none').html(carrinho.length);
+        }
         var numeroItem = '' + (item.id_item + 1);
         var produtosHtml = '';
         if(numeroItem.length < 2) {
@@ -202,7 +210,7 @@ function carregaCarrinho(jQueryAjaxObj) {
           mensagemValidacao += '- Pizza '
             + (pedidoData.itens.length + 1) 
             + ' incompleta (pizza de dois sabores'
-            + ' faltando segundo sabor)\n';
+            + ' faltando segundo sabor)\n';carregaCarrinho
           valido = false;
         }
         valorTotalCarrinho += precoTotal;
@@ -263,17 +271,29 @@ function refreshCarrinho() {
     resolve = res;
   });
 
-  toggleCarrinho();
+  toggleCarrinho(fake=true);
   resolve('');
   return promise
 }
 
-function toggleCarrinho() {
+function toggleCarrinho(fake=false) {
   var resolve = null;
   var promise = new Promise(function(res, rej) {
     resolve = res;
   });
+
+  if (fake === true) {
+    resolve('')
+    return promise
+  }
+  
+  if (carrinho.length > 0) $("#carrinho-notificacao").html(carrinho.length);
+
   if($('#carrinho').css('height')==='0px'){
+    if(hasItens) {
+      $("#carrinho-notificacao").toggleClass("d-none");
+      console.log(hasItens)
+    }
     $('#carrinho').css({'display': ''});
     $('#carrinho').css({'visibility':'visible','opacity':'100',
       'border':'1px solid #34675154','height':$('#medida').height() + 10 +'px',
@@ -285,6 +305,9 @@ function toggleCarrinho() {
       cartStatus = true;
       resolve('');
   } else {
+    if(hasItens) {
+      $("#carrinho-notificacao").toggleClass("d-none");
+    }
     $('#carrinho').css({'opacity':'0','border':'1px solid #white',
       'height':'0px','transition':'opacity 250ms, height 150ms ease-in, border-color 250ms ease'});
     setTimeout(function(){
