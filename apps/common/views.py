@@ -290,8 +290,7 @@ def pedidos_busca(request:HttpRequest) -> HttpResponse:
     status_selecionado = request.GET.get("status")
     pesquisa = request.GET.get("pesquisa")
     ordenacao = request.GET.get("ordem")
-    pedidos = Pedido.objects.filter(Q(data=datetime.now().date()) &\
-        Q(idstatus = StatusPedido.objects.filter(id=status_selecionado).get())).all()
+    pedidos = Pedido.objects.filter(Q(idstatus = StatusPedido.objects.filter(id=status_selecionado).get())).all()
     if pesquisa and pesquisa != 'undefined':
         pedidos = pedidos.filter(Q(idcliente__nome__icontains=pesquisa) | Q(idcliente__sobrenome__icontains=pesquisa))
     if ordenacao is not None:
