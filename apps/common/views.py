@@ -259,8 +259,7 @@ def pedidos_novo(request:HttpRequest) -> HttpResponse:
 
 def pedidos_carregar(request:HttpRequest, pk:int) -> HttpResponse:
     # status_preparacao = StatusPedido.objects.get(pk=pk)
-    pedidos = Pedido.objects.filter(Q(data=datetime.now().date()) &\
-        Q(idstatus = StatusPedido.objects.filter(id=pk).get())).all()
+    pedidos = Pedido.objects.filter(Q(idstatus = StatusPedido.objects.filter(id=pk).get())).all()
     pedidos_tela = []
     for pedido in pedidos:
         cliente = load_cliente_data(pedido.idcliente, None)
