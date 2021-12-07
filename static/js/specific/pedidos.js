@@ -13,6 +13,10 @@ async function carregaPedidos() {
 function aplicaItens(itens) {
     var html = '';
 
+    let itemCounter = 1;
+    let rowFirstItem = itemCounter;
+    let rowLastItem = itemCounter+2;
+
     for(item of itens) {
       let htmlProdInt = '';
       let lastProd = null;
@@ -31,15 +35,16 @@ function aplicaItens(itens) {
             <span class="item-descr">${produto.nome.replace('Pizza de', '')}</span>
             <span class="destaque">R$${asMonetary(produto.preco)}</span>
             </div>`;
-
+            
             if (lastProd != null) {
                 if (lastProd.quantidade == 0.5) {
                     htmlProdInt += '</div>';
                     lastProd = null;
                 }
             }
-
-            lastProd = produto;
+            else {
+              lastProd = produto;
+            }
           }
           else {
               htmlProdInt += `
@@ -52,6 +57,18 @@ function aplicaItens(itens) {
               lastProd = null;
           }
       }
+
+      if (itemCounter === rowFirstItem) {
+        if (itens.length%3==0)
+        {
+          html += '<div class="row d-flex justify-content-around align-items-baseline mb-4 px-3">';
+        }
+        else {
+          html += '<div class="row d-flex justify-content-evenly align-items-baseline mb-4">';
+        }
+        rowFirstItem += 3;
+      }
+
       html += PEDIDO_TEMPLATE.format(
         item.id,
         item.status,
@@ -67,6 +84,13 @@ function aplicaItens(itens) {
         asMonetary(total),
         item.obs
       );
+
+      if (itemCounter == rowLastItem) {
+        html += '</div>';
+        rowLastItem += 3;
+      }
+
+      itemCounter++;
     }
     containerItens.html(html);
 }
